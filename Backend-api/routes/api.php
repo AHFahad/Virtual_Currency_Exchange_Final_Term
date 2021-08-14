@@ -26,7 +26,9 @@ Route::group([
     'as'=>'seller.'
 ],function()
 {
-    route::resource('product','ProductController');
+    route::resource('product','ProductController')->except('update');
+    route::post('product/{id}','ProductController@update');
     route::resource('profile','profileController')->only('index');
     route::resource('order','OrderController')->only(['index','show','update']);
+    route::post('product/update/status','productController@updateStatus')->name('product.updatestatus');
 });

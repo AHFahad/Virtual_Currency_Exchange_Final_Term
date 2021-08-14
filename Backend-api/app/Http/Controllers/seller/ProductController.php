@@ -21,11 +21,17 @@ class ProductController extends Controller
     public function index(Request $request)
     {
 
-        // $user=User::find($request->session()->get('id'));
+        // $request->session()->get('id')
+        $user=User::find(1);
         $product=Product::where('seller_id',1)->get();
 
         // return view('seller.sellerProducts',compact('product','user'));
-        return $product;
+
+        return response()->json([
+            'product' => $product,
+            'user' => $user,
+            'status'=>'success'
+        ]);
     }
 
     /**
@@ -45,11 +51,12 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductRequest $request)
+    public function store(Request $request)
     {
-
+        // $request->session()->get('id')
         $product = new Product;
-        $user=User::find($request->session()->get('id'));
+        $user=User::find(1);
+        $extension="";
         if($user->points >=10 || $user->prime_status=="prime"){
             if($user->prime_status!="prime")
             $user->points=$user->points-10;
@@ -76,28 +83,38 @@ class ProductController extends Controller
             if($product->save()){
                 // $request->session()->flash('msg',"Product Added Successfully!");
                 return response()->json([
-                    "message" => "Product Added Successfully!"
-                  ], 404);
+                    'msg' => "Product Added Successfully!",
+                    'user' => $user,
+                    'status'=>'success',
+                    'proudct_ic'=>$request->hasFile('product_picture')
+                ]);
             }
             else
             {
                 // $request->session()->flash('msg'," Failed To Add Product!");
                 return response()->json([
-                    "message" => "Failed To Add Product!"
-                  ], 404);
+                    'msg' => "Failed To Add Product!",
+                    'user' => $user,
+                    'status'=>'error'
+                ]);
             }
 
         }
         else{
             // $request->session()->flash('msg'," you do not have enough points, you can upgrate to prime seller!");
             return response()->json([
-                "message" => "you do not have enough points, you can upgrate to prime seller!"
-              ], 404);
+                'msg' => "you do not have enough points, you can upgrate to prime seller!",
+                'user' => $user,
+                'status'=>'error'
+            ]);
+
         }
 
         return response()->json([
-            "message" => "done"
-          ], 404);
+            'msg' => "Product Added Successfully! done",
+            'user' => $user,
+            'status'=>'success'
+        ]);
 
 
         //  return redirect()->Back();
@@ -142,7 +159,16 @@ class ProductController extends Controller
 
 
         // return View('seller.showproduct',compact('product','payment_methods','counter','counter2','user','avg_rating'));
-        return $product;
+
+        return response()->json([
+            'product' => $product,
+            'user' => $user,
+            'status'=>'success',
+            'payment_methods' => $payment_methods,
+            'counter' => $counter,
+            'counter2' => $counter2,
+            'avg_rating' => $avg_rating,
+        ]);
 
     }
 
@@ -152,13 +178,23 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product,Request $request)
+    public function edit( $id,Request $request)
     {
-        $user=User::find($request->session()->get('id'));
+        // $request->session()->get('id')
+        $user=User::find(1);
         $payment_methods = array('none',"Bkash", "Nagod", "roket","Mkash","Ukash","Gkash");
         $counter=0;
         $counter2=0;
-        return View('seller.editproduct',compact('product','payment_methods','counter','counter2','user'));
+        // return View('seller.editproduct',compact('product','payment_methods','counter','counter2','user'));
+        $product=Product::find($id);
+        return response()->json([
+            'product' => $product,
+            'user' => $user,
+            'status'=>'success',
+            'payment_methods' => $payment_methods,
+            'counter' => $counter,
+            'counter2' => $counter2,
+        ]);
     }
 
     /**
@@ -168,9 +204,10 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ProductRequest $request, $id)
+    public function update(Request $request, $id)
     {
-         $user=User::find($request->session()->get('id'));
+        // $request->session()->get('id')
+         $user=User::find(1);
             if($user->points >=5 || $user->prime_status=="prime"){
                 if($user->prime_status!="prime"){
                     $user->points=$user->points-5;
@@ -194,14 +231,24 @@ class ProductController extends Controller
                 $product->To_currency= $request->input('To_currency');
                 $product->number_of_info=$request->input('number_of_info');
                 $product->update();
-                $request->session()->flash('msg','Product is Updated!');
+                // $request->session()->flash('msg','Product is Updated!');
+                return response()->json([
+                    'msg' => "Product is Updated!",
+                    'user' => $user,
+                    'status'=>'success',
+                ]);
             }
             else{
-                $request->session()->flash('msg'," you do not have enough points");
+                // $request->session()->flash('msg'," you do not have enough points");
+                return response()->json([
+                    'msg' => " you do not have enough points",
+                    'user' => $user,
+                    'status'=>'success',
+                ]);
              }
 
 
-        return redirect()->back();
+        // return redirect()->back();
     }
 
     /**
@@ -220,31 +267,14 @@ class ProductController extends Controller
 
     public function updateStatus(Request $request)
     {
-
-
-
-
-
         $id=$request->id;
         $product=Product::find($id);
         $product->delete_status=$request->status;
-
-
-            if ($product->update()) {
-                return response()->json([
-                    'success' => 'Update successfully.'
-                ]);
-            } else {
-                return response()->json([
-                    'success' => 'Something went wrong.'
-                ]);
-            }
-
-
-
-
-        // $request->session()->flash('msg','Product activated Successfully');
-        // return redirect()->back();
+        $product->update();
+        return response()->json([
+            'msg' => 'Update successfully...',
+            'status'=>'success',
+        ]);
     }
 
     public function deactive(Request $request, $id )
@@ -272,7 +302,12 @@ class ProductController extends Controller
 
         $product->delete_status= 'deleted';
         $product->update();
-        $request->session()->flash('msg','Product Deleted Successfully');
-        return redirect()->route('seller.product.index');
+        // $request->session()->flash('msg','Product Deleted Successfully');
+        // return redirect()->route('seller.product.index');
+
+        return response()->json([
+            'msg' => 'Product Deleted Successfully',
+            'status'=>'success',
+        ]);
     }
 }

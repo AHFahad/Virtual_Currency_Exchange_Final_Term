@@ -47,29 +47,61 @@ import {
   import React, { useState, useEffect } from 'react';
   import _Table from 'components/Table.js'
   import { useParams  } from "react-router";
+  import Swal from 'sweetalert2';
+  import { useHistory } from "react-router-dom";
+
   const baseURL="http://localhost:8000/api/seller/order/"
   const OrderList = (props) => {
     const {id:eid} = useParams();
-
-
+    const history = useHistory();
     const [orderDetails, setOrderDetails] = useState([]);
     const [productDetails, setProductDetails] = useState([]);
+
     const getData=async()=>{
       const response= await axios.get(baseURL+eid);
-      console.table(response.data.order);
       setOrderDetails(response.data.order);
       setProductDetails(response.data.product);
-      // console.table(response.data.user);
     }
 
     useEffect(()=>{
-        console.log(props.location.pathname);
       getData();
-
     }, []);
+    
+    const handleInputChange = (event) => {
+      const { name, value } = event.target;
+      setOrderDetails({ ...orderDetails, [name]: value });
+      console.log(orderDetails);
+    };
 
+    const _onSubmit= async(e)=>{
+      e.preventDefault();
+     const order={
+      transection_no:orderDetails.transection_no,
+      seller_reply:orderDetails.seller_reply,
+      status:orderDetails.status
+     }
 
-
+     axios.put(baseURL+eid, order)
+     .then((res) => {
+       console.log(res.data)
+        Swal.fire(
+          res.data.msg,
+          'You clicked the button!',
+          res.data.status
+        )
+        history.push('/seller/orders');
+     }).catch((error) => {
+       console.log(error)
+       Swal.fire(
+        'somting wen wrong',
+        'You clicked the button!',
+        'error'
+      )
+     })
+     
+    };
+    
+    
 
 
     return (
@@ -277,7 +309,9 @@ import {
                   </div>
                   <hr className="my-4" />
                   {/* Description */}
-                  <Form>
+                  <Form
+                  onSubmit={_onSubmit}
+                  >
                   <h6 className="heading-small text-muted mb-4">Reply:</h6>
                   <Col lg="12">
                         <FormGroup>
@@ -290,7 +324,10 @@ import {
                           <Input
                             className="form-control-alternative"
                             id="input-email"
-                            type="email"
+                            type="text"
+                            name="transection_no"
+                            value={orderDetails.transection_no}
+                            onChange={handleInputChange}
                           />
                         </FormGroup>
                       </Col>
@@ -302,6 +339,9 @@ import {
                         placeholder="write ..."
                         rows="4"
                         type="textarea"
+                        name="seller_reply"
+                        value={orderDetails.seller_reply}
+                        onChange={handleInputChange}
                       />
                     </FormGroup>
                     </Col>
@@ -309,17 +349,20 @@ import {
                   <Col xs="4">
                     <Button
                       color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
+                      type="submit" 
+                      name='status'
+                      value='completed'
+                      onClick={handleInputChange}
                       
                     >
                       send
                     </Button>
                     <Button
                       color="danger"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      
+                      type="submit" 
+                      name='status'
+                      value='cancelled'
+                      onClick={handleInputChange}
                     >
                       Cancel
                     </Button>
