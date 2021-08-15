@@ -101,37 +101,78 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     //complete order
-    public function update(OrderConfirmRequest $request, $id)
+    public function update(Request $request, $id)
     {
+        // $request->session()->get('id')
         $order=Order::find($id);
-        $user=User::find($request->session()->get('id'));
+        $user=User::find(1);
 
         $product=Product::find($order->product_id);
 
         if($product->seller_id== $user->id){
             $order->transection_no=$request->transection_no;
             $order->seller_reply=$request->seller_reply;
-            if($request->cancel=='cancelled'){
+            if($request->status=='cancelled'){
                 $order->status='cancelled';
-                $request->session()->flash('msg','order cancelled Successfully');
+
+                $user->update();
+                if($order->update()){
+                    return response()->json([
+                        'msg' => 'order cancelled Successfully',
+                        'user' => $user,
+                        'status'=>'success'
+                    ]);
+                }else{
+                    return response()->json([
+                        'msg' => 'order cancelled had a problem',
+                        'user' => $user,
+                        'status'=>'error'
+                    ]);
+
+                }
+
             }
             else{
                 $order->status='completed';
                 if($user->prime_status=='normal'){
                     $user->points=$user->points+1;
-                    $request->session()->flash('msg','order completed Successfully! and you got 1 point!');
+                    $order->update();
+                     $user->update();
+                    return response()->json([
+                        'msg' => 'order completed Successfully! and you got 1 point!',
+                        'user' => $user,
+                        'status'=>'success'
+                    ]);
                 }
                 else{
-                    $request->session()->flash('msg','order completed Successfully');
+                    $user->update();
+                    if($order->update()){
+                       return response()->json([
+                        'msg' => 'order completed Successfully',
+                        'user' => $user,
+                        'status'=>'success',
+                        'status2'=>$request->status
+                    ]);
+                    }
+                    else{
+                        return response()->json([
+                            'msg' => 'order  Successfully not Updated',
+                            'user' => $user,
+                            'status'=>'error'
+                        ]);
+                    }
+
                 }
 
             }
-            $order->update();
-            $user->update();
+
         }
         else{
-            $request->session()->flash('msg','Some thing went wrong');
-            return redirect()->back();
+            return response()->json([
+                'msg' => 'Some thing went wrong',
+                'user' => $user,
+                'status'=>'error'
+            ]);
         }
 
         return redirect()->route('seller.order.index');

@@ -17,8 +17,10 @@ class DashboardController extends Controller
 
 
     public function index(Request $request){
+
         $this->pointsChecker($request);
-        $user = User::find($request->session()->get('id'));
+        // $request->session()->get('id')
+        $user = User::find(1);
 
         $product=Product::join('orders','orders.product_id','=','products.id')
                         ->join('users','users.id','=','products.seller_id')
@@ -51,15 +53,26 @@ class DashboardController extends Controller
                         ->where('orders.status','cancelled')
                         ->get('orders.id');
         $cancelledOrder=$product3->count();
-        $start_date=date('d-m-Y');
-        $end_date=date('d-m-Y');
+        $start_date=date('Y-m-d');
+        $end_date=date('Y-m-d');
 
 
-        return view('seller.sellerdashboard',compact('processingOrder','completedOrder','cancelledOrder','user','start_date','end_date','total_earning'));
+        // return view('seller.sellerdashboard',compact('processingOrder','completedOrder','cancelledOrder','user','start_date','end_date','total_earning'));
 
+        return response()->json([
+            'processingOrder' => $processingOrder,
+            'user' => $user,
+            'completedOrder' => $completedOrder,
+            'cancelledOrder' => $cancelledOrder,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'total_earning' => $total_earning,
+            'status'=>'success'
+        ]);
     }
     public function get(Request $request){
-        $user = User::find($request->session()->get('id'));
+        // $request->session()->get('id')
+        $user = User::find(1);
         $start_date=$request->start_date;
         $end_date=$request->end_date;
 
@@ -99,12 +112,24 @@ class DashboardController extends Controller
                                     return $t->amount * $t->price_on_selling_time;
                         });
 
-        return view('seller.sellerdashboard',compact('processingOrder','completedOrder','cancelledOrder','user','start_date','end_date','total_earning'));
+        // return view('seller.sellerdashboard',compact('processingOrder','completedOrder','cancelledOrder','user','start_date','end_date','total_earning'));
 
+
+        return response()->json([
+            'processingOrder' => $processingOrder,
+            'user' => $user,
+            'completedOrder' => $completedOrder,
+            'cancelledOrder' => $cancelledOrder,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'total_earning' => $total_earning,
+            'msg'=>"Data updated successfully..",
+            'status'=>'success'
+        ]);
     }
     public function pointsChecker(Request $request){
-
-        $user = User::find($request->session()->get('id'));
+        // $request->session()->get('id')
+        $user = User::find(1);
         $p=Prime_reset::where('seller_id',$user->id)->first();
         // dd($prime->count());
 

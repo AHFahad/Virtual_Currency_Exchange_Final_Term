@@ -22,6 +22,12 @@ import Maps from "./views/examples/Maps.js";
 import Tables from "./views/examples/Tables.js";
 import Icons from "./views/examples/Icons.js";
 import OrderDetails from "./views/seller/OrderDetails.js";
+import Products from "./views/seller/Products.js";
+import ProductDetails from "./views/seller/ProductDetails.js";
+import CreateProduct from "./views/seller/CreateProduct.js";
+import StatementList from "./views/seller/StatementList.js";
+import StatementDetails from "./views/seller/StatementDetails.js";
+
 var routes = [
   {
     path: "/index",
@@ -43,7 +49,7 @@ var routes = [
     path: "/product/create",
     name: "Create Sell Post",
     icon: "ni ni-bag-17  text-primary",
-    component: Icons,
+    component: CreateProduct,
     layout: "/seller",
     show:true,
   },
@@ -67,9 +73,17 @@ var routes = [
     path: "/statements",
     name: "Statements",
     icon: "ni ni-single-copy-04  text-primary",
-    component: Maps,
+    component: StatementList,
     layout: "/seller",
     show:true,
+  },
+  {
+    path: "/statement/details/:id",
+    name: "Statement Details",
+    icon: "ni ni-single-copy-04  text-primary",
+    component:StatementDetails ,
+    layout: "/seller",
+    show:false,
   },
   {
     path: "/edit/profile",
@@ -83,9 +97,25 @@ var routes = [
     path: "/product/index",
     name: "My products",
     icon: "ni ni-ungroup  text-primary",
-    component: Tables,
+    component: Products,
     layout: "/seller",
     show:true,
+  },
+  {
+    path: "/product/:id",
+    name: "My products",
+    icon: "ni ni-ungroup  text-primary",
+    component: ProductDetails,
+    layout: "/seller",
+    show:false,
+  },
+  {
+    path: "/edit/product/:id",
+    name: "Edit Product",
+    icon: "ni ni-ungroup  text-primary",
+    component: CreateProduct,
+    layout: "/seller",
+    show:false,
   },
   
 ];
