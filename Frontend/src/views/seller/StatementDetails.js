@@ -52,20 +52,19 @@ import {
   import Swal from 'sweetalert2';
   import { useHistory } from "react-router-dom";
 
-  const baseURL="http://localhost:8000/api/seller/product/"
-  const ProductDetails = (props) => {
+  const baseURL="http://localhost:8000/api/seller/statement/"
+  const StatementDetails = (props) => {
     const {id:eid} = useParams();
     const history = useHistory();
     const [paymentMethods, setPaymentMethods] = useState([]);
     const [productDetails, setProductDetails] = useState([]);
+    const [orderDetails, setOrderDetails] = useState([]);
     const [avg_rating, setAvg_rating] = useState([]);
 
     const getData=async()=>{
       const response= await axios.get(baseURL+eid);
-      console.log(response.data.payment_methods[1]);
-      setPaymentMethods(response.data.payment_methods);
       setProductDetails(response.data.product);
-      setAvg_rating(response.data.avg_rating);
+      setOrderDetails(response.data.order);
     }
 
     useEffect(()=>{
@@ -80,68 +79,9 @@ import {
 
     const _onSubmit= async(e)=>{
       e.preventDefault();
-     const order={
-    //   transection_no:orderDetails.transection_no,
-    //   seller_reply:orderDetails.seller_reply,
-    //   status:orderDetails.status
-     }
-
-     axios.put(baseURL+eid, order)
-     .then((res) => {
-       console.log(res.data)
-        Swal.fire(
-          res.data.msg,
-          'You clicked the button!',
-          res.data.status
-        )
-        history.push('/seller/orders');
-     }).catch((error) => {
-       console.log(error)
-       Swal.fire(
-        'somting wen wrong',
-        'You clicked the button!',
-        'error'
-      )
-     })
-     
     };
     const _delete=(e)=>{
-      e.preventDefault();
-      Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      }).then((result) => {
-        if (result.isConfirmed) {
-
-          axios.delete(baseURL+eid)
-     .then((res) => {
-       console.log(res.data)
-        Swal.fire(
-          res.data.msg,
-          'You clicked the button!',
-          res.data.status
-        )
-        history.push('/seller/product/index');
-     }).catch((error) => {
-       console.log(error)
-       Swal.fire(
-        'somting wen wrong',
-        'You clicked the button!',
-        'error'
-      )
-     })
-          // Swal.fire(
-          //   'Deleted!',
-          //   'Your file has been deleted.',
-          //   'success'
-          // )
-        }
-      })
+     
     }
     
     
@@ -179,50 +119,101 @@ import {
                 <ProductInfoTemplete key={productDetails.id} {...productDetails} paymentMethods={paymentMethods}></ProductInfoTemplete>
                   
 
+                <h6 className="heading-small text-muted mb-4">About the order:</h6>
 
-
-                <div className="pl-lg-4">                 
+                <div className="pl-lg-4"> 
                     <Row>
-                      <Col lg="12">
+                        <Col lg="6">
+                            <FormGroup>
+                            <label
+                                className="form-control-label"
+                                htmlFor="input-first-name"
+                            >
+                                Transaction NO:
+                            </label>
+                            { orderDetails.transection_no }
+                            </FormGroup>
+                        </Col>
+                      </Row>                
+                    <Row>
+                         <Col lg="12">
                         <FormGroup>
                           <label
                             className="form-control-label"
                             htmlFor="input-first-name"
                           >
-                            Average Rating:
+                             Seller Reply:
                           </label><br/>
-                          { avg_rating }
+                          { orderDetails.seller_reply }
+                        </FormGroup>
+                      </Col> 
+                      </Row>
+                      <Row>
+                         <Col lg="12">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-first-name"
+                          >
+                             Buyer Reply:
+                          </label><br/>
+                          { orderDetails.buyer_reply }
+                        </FormGroup>
+                      </Col> 
+                      </Row>
+                    
+                    <Row>
+                    <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-first-name"
+                          >
+                             Transection NO of Sender:
+                          </label>
+                          { orderDetails.transection_number_of_sender }
                         </FormGroup>
                       </Col>
-                    </Row>
+                      
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-first-name"
+                          >
+                             Rating:
+                          </label>
+                          { orderDetails.rating?orderDetails.rating:" No Rating" }
+                        </FormGroup>
+                      </Col>
+                      </Row>
+                      <Row>
+                         <Col lg="12">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-first-name"
+                          >
+                             Review:
+                          </label>
+                          { orderDetails.review?orderDetails.review:" No Review" }
+                        </FormGroup>
+                      </Col> 
+                      </Row>
+                      
+                    
                   </div>
 
                   {/* form */}
-                  <Form
-                  onSubmit={_onSubmit}
-                  >
-                  <h6 className="heading-small text-muted mb-4">Action:</h6>
-                 
-                      
-                   
                   
+                  <h6 className="heading-small text-muted mb-4">Action:</h6> 
                     <Link
                       color="primary"
-                      className="btn btn-primary"
-                      to={`/seller/edit/product/${productDetails.id}`}
+                      className="btn btn-danger"
+                      to={`/seller/statements`}
                     >
-                      Edit
-                    </Link>
-                    
-                  
-                
-                </Form>
-                <Button
-                      color="danger"
-                      onClick={_delete}
-                    >
-                      delete
-                </Button>
+                      back
+                    </Link>  
               </CardBody>
             </Card>
           </Col>
@@ -234,5 +225,5 @@ import {
     );
   };
   
-  export default ProductDetails;
+  export default StatementDetails;
   
