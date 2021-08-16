@@ -49,6 +49,7 @@ import {
   import { useParams  } from "react-router";
   import Swal from 'sweetalert2';
   import { useHistory,Link } from "react-router-dom";
+import { set } from "date-fns";
 
   const baseURL="http://localhost:8000/api/seller/report";
   const ChangePassword = (props) => {
@@ -58,7 +59,7 @@ import {
      };
      
     const [passwordDetails, setPasswordDetails] = useState(initialize);
-    
+    const[formValidation,setFormValidation]=useState({report:""})
 
     useEffect(()=>{
     }, []);
@@ -83,12 +84,16 @@ import {
         axios.post(baseURL, reports)
         .then((res) => {
         console.log(res.data)
+        if(res.data.error==400){
+          setFormValidation({report:res.data.errorData})
+          console.log(res.data.errorData)
+        }
         Swal.fire(
             res.data.msg,
             'You clicked the button!',
             res.data.status
         )
-        history.push(`/seller/index`);
+        if(res.data.status=='success') history.push(`/seller/index`);
         }).catch((error) => {
         console.log(error)
         Swal.fire(
@@ -162,6 +167,7 @@ import {
                             value={passwordDetails.report}
                             onChange={handleInputChange}
                           />
+                          <span className="text-danger">{formValidation.report}</span>
                         </FormGroup>
                       </Col>
                     </Row>

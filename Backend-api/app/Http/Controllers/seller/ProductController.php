@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\seller;
-
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
@@ -53,6 +53,27 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:40|min:3',
+            'description' => 'required|max:500|min:10',
+            'price' => 'required|max:40|min:1',
+            'Pyament_recive_no' => 'required|max:40|min:11',
+         ],
+         [
+            'name.required' => 'Please provide a Title.',
+            'description.required' => 'Provide a desciption.',
+            'price.required' => 'Price is needed for the product.'
+        ]
+        );
+
+         if ($validator->fails()) {
+            return response()->json([
+                "errorData"=>$validator->errors(),
+                'msg' => "Validation Error",
+                'status' => 'error',
+                'error'=>'400'
+            ]);
+        }
         // $request->session()->get('id')
         $product = new Product;
         $user=User::find(1);
@@ -207,6 +228,27 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         // $request->session()->get('id')
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:40|min:3',
+            'description' => 'required|max:500|min:10',
+            'price' => 'required|max:40|min:1',
+            'Pyament_recive_no' => 'required|max:40|min:11',
+         ],
+         [
+            'name.required' => 'Please provide a Title.',
+            'description.required' => 'Provide a desciption.',
+            'price.required' => 'Prisc is needed for the product.'
+        ]
+        );
+
+         if ($validator->fails()) {
+            return response()->json([
+                "errorData"=>$validator->errors(),
+                'msg' => "Validation Error",
+                'status' => 'error',
+                'error'=>'400'
+            ]);
+        }
          $user=User::find(1);
             if($user->points >=5 || $user->prime_status=="prime"){
                 if($user->prime_status!="prime"){

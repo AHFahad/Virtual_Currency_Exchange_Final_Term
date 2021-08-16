@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\seller;
-
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\seller\EditProfileRequest;
 use Illuminate\Http\Request;
@@ -80,6 +80,21 @@ class ProfileController extends Controller
     // EditProfileRequest
     public function updateProfile(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:40|min:3',
+            'address' => 'required|max:500|min:10',
+            'phone_number' => 'required|max:40|min:11',
+         ],
+        );
+
+         if ($validator->fails()) {
+            return response()->json([
+                "errorData"=>$validator->errors(),
+                'msg' => "Validation Error",
+                'status' => 'error',
+                'error'=>'400'
+            ]);
+        }
         // $request->session()->get('id')
         $user=User::find(1);
 
@@ -134,12 +149,20 @@ class ProfileController extends Controller
     }
     public function updatePassword(Request $request)
     {
-        // $this->validate($request, [
 
-        //     'old_password' => 'required',
-        //     'new_password' => 'required|confirmed|max:50|min:4',
-        //     ]);
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required',
+            'new_password' => 'required|max:50|min:4',
+         ],);
 
+         if ($validator->fails()) {
+            return response()->json([
+                "errorData"=>$validator->errors(),
+                'msg' => "Validation Error",
+                'status' => 'error',
+                'error'=>'400'
+            ]);
+        }
             // $request->session()->get('id')
             $user=User::find(1);
 

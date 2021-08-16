@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\seller;
-
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
@@ -17,6 +17,28 @@ class PrimeController extends Controller
     // UpgradeToPrimeRequest
     public function store(Request $request){
         // $request->session()->get('id')
+
+
+        $validator = Validator::make($request->all(), [
+            'transection_no' => 'required|max:40|min:11',
+            'payment_method'=>'required|not_in:0',
+            'package'=>'required|not_in:0',
+         ],
+         [
+            'transection_no.required' => 'Please proper description of the problem..',
+            'package.not_in' => 'select a package',
+            'payment_method.not_in'=>'select a payment method'
+        ]
+        );
+
+         if ($validator->fails()) {
+            return response()->json([
+                "errorData"=>$validator->errors(),
+                'msg' => "Validation Error",
+                'status' => 'error',
+                'error'=>'400'
+            ]);
+        }
         $user=User::find(1);
         $payment =new Payment;
         $payment->seller_id=$user->id;

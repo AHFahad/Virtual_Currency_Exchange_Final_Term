@@ -56,7 +56,7 @@ import {
     const history = useHistory();
     const [orderDetails, setOrderDetails] = useState([]);
     const [productDetails, setProductDetails] = useState([]);
-
+    const[formValidation,setFormValidation]=useState([]);
     const getData=async()=>{
       const response= await axios.get(baseURL+eid);
       setOrderDetails(response.data.order);
@@ -84,12 +84,16 @@ import {
      axios.put(baseURL+eid, order)
      .then((res) => {
        console.log(res.data)
+       if(res.data.error==400){
+        setFormValidation(res.data.errorData)
+        console.log(res.data.errorData)
+      }
         Swal.fire(
           res.data.msg,
           'You clicked the button!',
           res.data.status
         )
-        history.push('/seller/orders');
+        if(res.data.status=='success') history.push('/seller/orders');
      }).catch((error) => {
        console.log(error)
        Swal.fire(
@@ -343,6 +347,7 @@ import {
                         value={orderDetails.seller_reply}
                         onChange={handleInputChange}
                       />
+                      <span className="text-danger">{formValidation.seller_reply}</span>
                     </FormGroup>
                     </Col>
                     <Row className="align-items-center">

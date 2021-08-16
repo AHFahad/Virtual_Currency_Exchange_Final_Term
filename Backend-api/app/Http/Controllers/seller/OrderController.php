@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\seller;
-
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -103,6 +103,22 @@ class OrderController extends Controller
     //complete order
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'seller_reply' => 'required|max:500|min:10',
+         ],
+        [
+            'seller_reply.required' => 'Provide a reply',
+            'seller_reply.min' => 'Provide a proper reply minimum 10 characters..'
+        ]);
+
+         if ($validator->fails()) {
+            return response()->json([
+                "errorData"=>$validator->errors(),
+                'msg' => "Validation Error",
+                'status' => 'error',
+                'error'=>'400'
+            ]);
+        }
         // $request->session()->get('id')
         $order=Order::find($id);
         $user=User::find(1);

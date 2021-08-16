@@ -60,7 +60,8 @@ import {
      };
      
     const [passwordDetails, setPasswordDetails] = useState(initialize);
-    
+    const[formValidation,setFormValidation]=useState([]);
+
 
     useEffect(()=>{
     }, []);
@@ -87,12 +88,17 @@ import {
         axios.post(baseURL, product)
         .then((res) => {
         console.log(res.data)
+        if(res.data.error==400){
+          setFormValidation(res.data.errorData)
+          console.log(res.data.errorData)
+        }
+
         Swal.fire(
             res.data.msg,
             'You clicked the button!',
             res.data.status
         )
-        history.push(`/seller/profile`);
+        if(res.data.status=='success') history.push(`/seller/profile`);
         }).catch((error) => {
         console.log(error)
         Swal.fire(
@@ -104,7 +110,7 @@ import {
       }
       else{
         Swal.fire(
-            'old and new password is not same',
+            'new and confirm password is not same',
             'You clicked the button!',
             'error'
             )
@@ -170,6 +176,8 @@ import {
                             value={passwordDetails.old_password}
                             onChange={handleInputChange}
                           />
+                          <span className="text-danger">{formValidation.old_password}</span>
+
                         </FormGroup>
                       </Col>
                         
@@ -192,6 +200,8 @@ import {
                             value={passwordDetails.new_password}
                             onChange={handleInputChange}
                           />
+                          <span className="text-danger">{formValidation.new_password}</span>
+
                         </FormGroup>
                       </Col> 
                      
