@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\seller;
+use Illuminate\Support\Facades\Validator;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -18,7 +19,28 @@ class ReportController extends Controller
     }
     // ReportRequest
     public function store(Request $request){
+
+        // $validator = Validator::make($request->all(),$this->rules() );;
+
+        $validator = Validator::make($request->all(), [
+                'report' => 'required|max:500|min:10',
+        ],
+         [
+            'report.required' => 'Provide a desciption of the problem .',
+            'report.min' => 'Please..write proper report . 10 character minimum'
+        ]
+        );
+        if ($validator->fails()) {
+            return response()->json([
+                "errorData"=>$validator->errors()->first(),
+                'msg' => $validator->errors()->first(),
+                'status' => 'error',
+                'error'=>'400'
+            ]);
+        }
+
         // $request->session()->get('id')
+
         $user=User::find(1);
         $report=new Report;
         $report->seller_id=$user->id;

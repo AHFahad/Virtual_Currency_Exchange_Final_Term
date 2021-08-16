@@ -62,6 +62,7 @@ import {
      };
      
     const [profileDetails, setProfileDetails] = useState(initialize);
+    const[formValidation,setFormValidation]=useState([]);
     const getData=async()=>{
       const response= await axios.get(BaseURLGET);
       setProfileDetails(response.data.user);
@@ -109,12 +110,16 @@ import {
         axios.post(baseURL, formdata)
         .then((res) => {
         console.log(res.data)
+        if(res.data.error==400){
+          setFormValidation(res.data.errorData)
+          console.log(res.data.errorData)
+        }
         Swal.fire(
             res.data.msg,
             'You clicked the button!',
             res.data.status
         )
-        history.push(`/seller/profile`);
+        if(res.data.status=='success') history.push(`/seller/profile`);
         }).catch((error) => {
         console.log(error)
         Swal.fire(
@@ -202,6 +207,7 @@ import {
                             Uplaod photo: 
                           </label><br/>
                           <input type="file" id="file-input" name="profile_picture_upload" className="mb-4" onChange={handlePicInput}  />
+                          
                         </FormGroup>
                     </Col>
                     </Row>
@@ -222,6 +228,7 @@ import {
                             value={profileDetails.name}
                             onChange={handleInputChange}
                           />
+                          <span className="text-danger">{formValidation.name}</span>
                         </FormGroup>
                       </Col>
                     
@@ -241,6 +248,8 @@ import {
                             value={profileDetails.phone_number}
                             onChange={handleInputChange}
                           />
+                         <span className="text-danger">{formValidation.phone_number}</span>
+
                         </FormGroup>
                       </Col> 
                      
@@ -262,6 +271,8 @@ import {
                             value={profileDetails.address}
                             onChange={handleInputChange}
                           />
+                          <span className="text-danger">{formValidation.address}</span>
+
                         </FormGroup>
                       </Col>
                       

@@ -67,18 +67,17 @@ import {
      };
      
     const [productDetails, setProductDetails] = useState(initialize);
-    let counter=1;
-    const [paymentMethods, setPaymentMethods] = useState([]);
+    const[formValidation,setFormValidation]=useState([]);
+
     const getData=async()=>{
       const response= await axios.get(baseURL+eid+"/edit");
-      setPaymentMethods(response.data.payment_methods);
       setProductDetails(response.data.product);
     }
 
     useEffect(()=>{
       if(eid)getData();
     }, []);
-    const formdata = new FormData();
+    
     const handleInputChange = (event) => {
       const { name, value } = event.target;
       setProductDetails({ ...productDetails, [name]: value });
@@ -86,12 +85,13 @@ import {
 
     
     
-    const  handlePicInput=(event)=>{
-      let p = event.target.files[0];
-      formdata.append("product_picture", p);
-      console.log(formdata.get('product_picture'));
-    }
+    // const  handlePicInput=(event)=>{
+    //   let p = event.target.files[0];
+    //   formdata.append("product_picture", p);
+    //   console.log(formdata.get('product_picture'));
+    // }
     const _onSubmit= async(e)=>{
+      setFormValidation([]);
       e.preventDefault();
       console.log(productDetails.id)
      const product={
@@ -106,6 +106,7 @@ import {
      }
      
     //  often forgets the file
+    const formdata = new FormData();
     let imagefile = document.querySelector('#file-input');
     formdata.append("product_picture", imagefile.files[0]);
     console.log(formdata.get('product_picture'));
@@ -123,16 +124,20 @@ import {
             axios.post(baseURL+eid, formdata)
             .then((res) => {
             console.log(res.data)
+            if(res.data.error==400){
+              setFormValidation(res.data.errorData)
+              console.log(res.data.errorData)
+            }
             Swal.fire(
                 res.data.msg,
                 'You clicked the button!',
                 res.data.status
             )
-            history.push(`/seller/product/${eid}`);
+            if(res.data.status=='success') history.push(`/seller/product/${eid}`);
             }).catch((error) => {
             console.log(error)
             Swal.fire(
-            'somting wentt wrong',
+            'somting went wrong',
             'You clicked the button!',
             'error'
             )
@@ -142,17 +147,22 @@ import {
         else{
             axios.post(baseURLPost, formdata)
             .then((res) => {
+              console.log(res.data)
+            if(res.data.error==400){
+              setFormValidation(res.data.errorData)
+              console.log(res.data.errorData)
+            }
             console.log(res.data)
                 Swal.fire(
                 res.data.msg,
                 'You clicked the button!',
                 res.data.status
                 )
-                history.push('/seller/order');
+                if(res.data.status=='success') history.push('/seller/product/index');
             }).catch((error) => {
             console.log(error)
             Swal.fire(
-                'somting wen wrong',
+                'somting wenttt wrong',
                 'You clicked the button!',
                 'error'
             )
@@ -242,7 +252,9 @@ import {
                           >
                             Uplaod photo: 
                           </label><br/>
-                          <input type="file" id="file-input" name="product_picture_upload" className="mb-4" onChange={handlePicInput}  />
+                          <input type="file" id="file-input" name="product_picture_upload" className="mb-4" onChange={handleInputChange}  />
+                          <span className="text-danger">{formValidation.old_password}</span>
+
                         </FormGroup>
                     </Col>
                       <Col lg="6">
@@ -261,6 +273,8 @@ import {
                             value={productDetails.name}
                             onChange={handleInputChange}
                           />
+                          <span className="text-danger">{formValidation.name}</span>
+
                         </FormGroup>
                       </Col>
                     </Row>
@@ -281,6 +295,7 @@ import {
                             value={productDetails.price}
                             onChange={handleInputChange}
                           />
+                          <span className="text-danger">{formValidation.price}</span>
                         </FormGroup>
                       </Col> 
                      
@@ -302,6 +317,7 @@ import {
                             value={productDetails.Pyament_recive_no}
                             onChange={handleInputChange}
                           />
+                          <span className="text-danger">{formValidation.Pyament_recive_no}</span>
                         </FormGroup>
                       </Col>
                       <Col lg="6">
@@ -379,6 +395,7 @@ import {
                                 value={productDetails.description}
                                 onChange={handleInputChange}
                             />
+                            <span className="text-danger">{formValidation.description}</span>
                         </FormGroup>
                       </Col>
                      

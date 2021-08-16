@@ -61,6 +61,7 @@ import {
      };
      
     const [paymentDetails, setPaymentDetails] = useState(initialize);
+    const[formValidation,setFormValidation]=useState([]);
     const handleInputChange = (event) => {
       const { name, value } = event.target;
       setPaymentDetails({ ...paymentDetails, [name]: value });
@@ -79,12 +80,16 @@ import {
         axios.post(baseURL,payment)
         .then((res) => {
         console.log(res.data)
+        if(res.data.error==400){
+          setFormValidation(res.data.errorData)
+          console.log(res.data.errorData)
+        }
         Swal.fire(
             res.data.msg,
             'You clicked the button!',
             res.data.status
         )
-        history.push(`/seller/index`);
+        if(res.data.status=='success') history.push(`/seller/index`);
         }).catch((error) => {
         console.log(error)
         Swal.fire(
@@ -166,6 +171,8 @@ import {
                             <option value="3">6 Month   4700  Taka</option>
                             <option value="3">1 Year    9000  Taka</option>
                         </select>
+                        <span className="text-danger">{formValidation.package}</span>
+
                         </FormGroup>
                       </Col>
                      
@@ -183,6 +190,8 @@ import {
                             <option value="2">Rocket</option>
                             <option value="3">Credit card</option>
                         </select>
+                        <span className="text-danger">{formValidation.payment_method}</span>
+
                         </FormGroup>
                       </Col>
                     </Row>
@@ -204,6 +213,8 @@ import {
                             value={paymentDetails.transection_no}
                             onChange={handleInputChange}
                           />
+                          <span className="text-danger">{formValidation.transection_no}</span>
+
                         </FormGroup>
                       </Col>
                     </Row>
