@@ -16,14 +16,21 @@ class ReportController extends Controller
         return view('seller.report',compact('user'));
 
     }
-    public function store(ReportRequest $request){
-        $user=User::find($request->session()->get('id'));
+    // ReportRequest
+    public function store(Request $request){
+        // $request->session()->get('id')
+        $user=User::find(1);
         $report=new Report;
         $report->seller_id=$user->id;
         $report->rep_description=$request->report;
         $report->buyer_id=0;// 0 becouse report is done by seller
         $report->save();
-        $request->session()->flash('msg'," Report is Sucessfully done.");
-        return redirect()->back();
+        return response()->json([
+            'msg' => "Report is Sucessfully done.",
+            'user' => $user,
+            'status'=>'success',
+        ]);
+        // $request->session()->flash('msg'," Report is Sucessfully done.");
+        // return redirect()->back();
     }
 }

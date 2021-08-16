@@ -287,13 +287,21 @@ class ProductController extends Controller
 
 
     public function search(Request $request){
-        $user=User::find($request->session()->get('id'));
-        $search = $request->input('search');
+        // $request->session()->get('id')
+        $user=User::find(1);
+        $search = $request->search;
         $product=Product::where('seller_id',$user->id)
                         ->where('name','LIKE','%'. $search .'%')
                         ->orWhere('description','LIKE','%'. $search .'%')
-                        ->paginate(4);
-        return view('seller.sellerProducts',compact('product','user'));
+                        ->get();
+        // return view('seller.sellerProducts',compact('product','user'));
+
+
+        return response()->json([
+            'product' => $product,
+            'user' => $user,
+            'status'=>'success'
+        ]);
 
     }
 

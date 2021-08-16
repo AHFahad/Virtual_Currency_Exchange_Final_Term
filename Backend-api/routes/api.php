@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SslCommerzPaymentController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -35,4 +37,23 @@ Route::group([
     route::get('invoice/{id}/{seller_id}/{buyer_id}','InvoiceController@index')->name('invoice.index');
     route::get('dashboard','DashboardController@index')->name('dashboard');
     route::Post('dashboard','DashboardController@get')->name('dashboard.get');
+    route::Post('profile/updateprofile','profileController@updateProfile')->name('profile.update');
+    route::Post('profile/update/password','profileController@updatePassword')->name('profile.update.password');
+    route::post('prime','PrimeController@store');
+    route::post('report','ReportController@store');
+    route::get('ssl/payment/{result}','SslController@result')->name('ssl.payment.result');
+    route::post('search/product','productController@search')->name('product.search');
+
 });
+//ssl ecommarz
+Route::get('/example1', [SslCommerzPaymentController::class, 'exampleEasyCheckout']);
+Route::get('/example2', [SslCommerzPaymentController::class, 'exampleHostedCheckout']);
+
+Route::post('/pay', [SslCommerzPaymentController::class, 'index']);
+Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
+
+Route::post('/success', [SslCommerzPaymentController::class, 'success']);
+Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
+Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
+
+Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);

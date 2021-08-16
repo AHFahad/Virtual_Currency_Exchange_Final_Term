@@ -28,7 +28,8 @@ class SslCommerzPaymentController extends Controller
         # Here you have to receive all the order data to initate the payment.
         # Let's say, your oder transaction informations are saving in a table called "orders"
         # In "orders" table, order unique identity is "transaction_id". "status" field contain status of the transaction, "amount" is the order amount to be paid and "currency" is for storing Site Currency which will be checked with paid currency.
-        $user=User::find($request->session()->get('id'));
+        // $request->session()->get('id')
+        $user=User::find(1);
 
 
         $post_data = array();
@@ -225,7 +226,7 @@ class SslCommerzPaymentController extends Controller
                         $user->update();
                     }
 
-                    return redirect()->route('seller.ssl.payment.result','success');
+                    // return redirect()->route('seller.ssl.payment.result','success');
             } else {
                 /*
                 That means IPN did not work or IPN URL was not set in your merchant panel and Transation validation failed.
@@ -235,18 +236,18 @@ class SslCommerzPaymentController extends Controller
                     ->where('transaction_id', $tran_id)
                     ->update(['status' => 'Failed']);
                 // echo "validation Fail";
-                return redirect()->route('seller.ssl.payment.result','Validation Fail');
+                // return redirect()->route('seller.ssl.payment.result','Validation Fail');
             }
         } else if ($order_detials->status == 'Processing' || $order_detials->status == 'Complete') {
             /*
              That means through IPN Order status already updated. Now you can just show the customer that transaction is completed. No need to udate database.
              */
             // echo "Transaction is successfully Completed";
-            return redirect()->route('seller.ssl.payment.result','success');
+            // return redirect()->route('seller.ssl.payment.result','success');
         } else {
             #That means something wrong happened. You can redirect customer to your product page.
             // echo "Invalid Transaction";
-            return redirect()->route('seller.ssl.payment.result','Invalid Transaction');
+            // return redirect()->route('seller.ssl.payment.result','Invalid Transaction');
         }
 
 
