@@ -19,7 +19,11 @@ class ProfileController extends Controller
         $user=User::find(1);
         // dd($user);
         // return view('seller.profile',compact('user'));
-        return $user;
+
+        return response()->json([
+            'user' => $user,
+            'status'=>'success'
+        ]);
     }
 
     /**
@@ -73,9 +77,11 @@ class ProfileController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function updateProfile(EditProfileRequest $request)
+    // EditProfileRequest
+    public function updateProfile(Request $request)
     {
-        $user=User::find($request->session()->get('id'));
+        // $request->session()->get('id')
+        $user=User::find(1);
 
         if($user->points >=10 || $user->prime_status=="prime"){
             if($user->prime_status!="prime")
@@ -93,13 +99,23 @@ class ProfileController extends Controller
                 $user->address=$request->input('address');
                 $user->phone_number=$request->input('phone_number');
                 $user->update();
-                $request->session()->flash('msg','Profile is Updated!');
+                // $request->session()->flash('msg','Profile is Updated!');
+                return response()->json([
+                    'msg' => "Profile is Updated!",
+                    'user' => $user,
+                    'status'=>'success'
+                ]);
         }
         else{
-            $request->session()->flash('msg'," you do not have enough points");
+            // $request->session()->flash('msg'," you do not have enough points");
+            return response()->json([
+                'msg' => " you do not have enough points",
+                'user' => $user,
+                'status'=>'error'
+            ]);
         }
 
-        return redirect()->back();
+        // return redirect()->back();
 
     }
 
@@ -118,25 +134,35 @@ class ProfileController extends Controller
     }
     public function updatePassword(Request $request)
     {
-        $this->validate($request, [
+        // $this->validate($request, [
 
-            'old_password' => 'required',
-            'new_password' => 'required|confirmed|max:50|min:4',
-            ]);
+        //     'old_password' => 'required',
+        //     'new_password' => 'required|confirmed|max:50|min:4',
+        //     ]);
 
-
-            $user=User::find($request->session()->get('id'));
+            // $request->session()->get('id')
+            $user=User::find(1);
 
             if($user->password==$request->old_password){
                 $user->password=$request->new_password;
                 $user->update();
-                $request->session()->flash('msg', "Password change successfully!");
+                // $request->session()->flash('msg', "Password change successfully!");
+                return response()->json([
+                    'msg' => " Password change successfully!",
+                    'user' => $user,
+                    'status'=>'success'
+                ]);
             }
             else{
-                $request->session()->flash('msg', "Wrong Password");
+                // $request->session()->flash('msg', "Wrong Password");
+                return response()->json([
+                    'msg' => " Wrong Password",
+                    'user' => $user,
+                    'status'=>'error'
+                ]);
             }
 
-            return redirect()->Back();
+            // return redirect()->Back();
 
 
 

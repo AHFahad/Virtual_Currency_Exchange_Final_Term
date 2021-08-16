@@ -14,15 +14,22 @@ class PrimeController extends Controller
         $user=User::find($request->session()->get('id'));
         return view('seller.applyforprimeseller',compact('user'));
     }
-    public function store(UpgradeToPrimeRequest $request){
-        $user=User::find($request->session()->get('id'));
+    // UpgradeToPrimeRequest
+    public function store(Request $request){
+        // $request->session()->get('id')
+        $user=User::find(1);
         $payment =new Payment;
         $payment->seller_id=$user->id;
         $payment->package=$request->package;
         $payment->transection_no=$request->transection_no;
         $payment->payment_method=$request->payment_method;
         $payment->save();
-        $request->session()->flash('msg',"Successfully! done .wait for aprovals");
-        return redirect()->route('seller.dashboard');
+        // $request->session()->flash('msg',"Successfully! done .wait for aprovals");
+        return response()->json([
+            'msg' => " Successfully! done .wait for aprovals",
+            'user' => $user,
+            'status'=>'success'
+        ]);
+        // return redirect()->route('seller.dashboard');
     }
 }

@@ -42,14 +42,16 @@ import {
   import _Table from 'components/seller/ProductsTable.js'
   
   const baseURL="http://localhost:8000/api/seller/product"
+  const baseURLSearch="http://localhost:8000/api/seller/search/product"
   const Products = () => {
 
 
 
     const [products, setProducts] = useState([]);
+    const [search, setSearch] = useState([]);
     const getData=async()=>{
       const response= await axios.get(baseURL);
-      console.table(response.data.product);
+      // console.table(response.data.product);
       setProducts(response.data.product)
       // console.table(response.data.user);
     }
@@ -60,9 +62,36 @@ import {
     }, []);
 
  
+    const handleInputChange = (event) => {
+      const { name, value } = event.target;
+      setSearch({ ...search, [name]: value });
 
 
+      // axios.post(baseURLSearch,search)
+      // .then((res) => {
+      // console.log(res.data.product)
+      // setProducts(res.data.product)
+     
+      
+      // }).catch((error) => {
+      // console.log(error)
+      
+      // }) 
+    };
 
+    const _onSubmit= async(e)=>{
+      e.preventDefault();
+      console.log(search);
+        axios.post(baseURLSearch,search)
+        .then((res) => {
+        console.log(res.data.product)
+        setProducts(res.data.product)
+       
+        
+        }).catch((error) => {
+        console.log(error);
+        }) 
+    }
 
     return (
       <>
@@ -70,7 +99,22 @@ import {
         {/* Page content */}
         <Container className="mt--7" fluid>
           {/* Table */}
-         
+                <form onSubmit={_onSubmit}  >
+              <div className='row'>
+                  <div className="col-sm-11">
+                  <div className="form-outline">
+                  <input type="search" id="form1" name='search' className="form-control" value={search.search} onChange={handleInputChange} /><br/><br/>
+                  </div>
+
+                  </div>
+                  <div className="col-sm-1">
+                      <button type="submit" className="btn btn-success">
+                          <i className="fas fa-search"></i>
+                      </button>
+                  </div>
+              </div>
+          </form>
+
           <Row>
            
              

@@ -1,23 +1,11 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import Index from "./views/seller/Index.js";
 import OrderList from "./views/seller/OrderList.js";
-import Profile from "./views/examples/Profile.js";
+import Profile from "./views/seller/Profile.js";
+import EditProfile from "./views/seller/EditProfile.js";
+import ChangePassword from "./views/seller/ChangePassword.js";
+import UpgradeToPrime from "./views/seller/UpgradeToPrime.js";
+import Report from "./views/seller/Report.js";
+import SslPayment from "./views/seller/SslPayment.js";
 import Maps from "./views/examples/Maps.js";
 import Tables from "./views/examples/Tables.js";
 import Icons from "./views/examples/Icons.js";
@@ -41,9 +29,17 @@ var routes = [
     path: "/upgrade/prime",
     name: "Upgrade to Prime Seller!",
     icon: "ni ni-spaceship  text-primary",
-    component: Icons,
+    component: UpgradeToPrime,
     layout: "/seller",
     show:true,
+  },
+  {
+    path: "/ssl/payment",
+    name: "Upgrade to Prime Seller!",
+    icon: "ni ni-spaceship  text-primary",
+    component: SslPayment,
+    layout: "/seller",
+    show:false,
   },
   {
     path: "/product/create",
@@ -86,12 +82,28 @@ var routes = [
     show:false,
   },
   {
-    path: "/edit/profile",
+    path: "/profile",
     name: "User Profile",
     icon: "ni ni-ruler-pencil  text-primary",
     component: Profile,
     layout: "/seller",
     show:true,
+  },
+  {
+    path: "/edit/profile",
+    name: "User Profile",
+    icon: "ni ni-ruler-pencil  text-primary",
+    component: EditProfile,
+    layout: "/seller",
+    show:false,
+  },
+  {
+    path: "/change/password",
+    name: "Change Password",
+    icon: "ni ni-ruler-pencil  text-primary",
+    component: ChangePassword,
+    layout: "/seller",
+    show:false,
   },
   {
     path: "/product/index",
@@ -116,6 +128,14 @@ var routes = [
     component: CreateProduct,
     layout: "/seller",
     show:false,
+  },
+  {
+    path: "/report",
+    name: "Report",
+    icon: "ni ni-ungroup  text-primary",
+    component:Report,
+    layout: "/seller",
+    show:true,
   },
   
 ];

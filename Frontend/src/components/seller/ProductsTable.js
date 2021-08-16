@@ -4,7 +4,6 @@ const ProductsTable = ({list})=>{
    
     return (
         <>
-        {console.table(list)}
             
             
             {
