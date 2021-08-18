@@ -13,6 +13,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-d
 import AdminLayout from "./layouts/Admin.js";
 import SellerLayout from "./layouts/Seller.js";
 import AuthLayout from "./layouts/Auth.js";
+import AddAdmin from 'views/admin/createAdmin';
 function App() {
   return (
     <div>
@@ -21,6 +22,7 @@ function App() {
         <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
         <Route path="/seller" render={(props) => <SellerLayout {...props} />} />
         <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
+        {/* <Route path="/admin/addAdmin" component = {AddAdmin} /> */}
         <Redirect from="/" to="/admin/index" />
       </Switch>
     </Router>
