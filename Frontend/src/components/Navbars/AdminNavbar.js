@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useHistory,Link } from "react-router-dom";
 // reactstrap components
 import {
   DropdownMenu,
@@ -16,8 +16,12 @@ import {
   Container,
   Media,
 } from "reactstrap";
-
+import axios from "axios";
+import Swal from 'sweetalert2';
+import React, { useState, useEffect } from 'react';
+const baseURL="http://localhost:8000/api/logout";
 const AdminNavbar = (props) => {
+  const history = useHistory();
   return (
     <>
       <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
@@ -68,20 +72,32 @@ const AdminNavbar = (props) => {
                   <i className="ni ni-single-02" />
                   <span>My profile</span>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-settings-gear-65" />
-                  <span>Settings</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-calendar-grid-58" />
-                  <span>Activity</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-support-16" />
-                  <span>Support</span>
-                </DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
+                <DropdownItem href="#pablo" onClick={
+                  (e) => {
+                    e.preventDefault();
+                    const response=  axios.get(baseURL).then((res)=>{
+                            Swal.fire(
+                                res.data.msg,
+                                'You clicked the button!',
+                                res.data.status
+                              )
+                              localStorage.clear();
+                              history.push('/login');
+                              
+                    }).catch(res=>{
+                      Swal.fire(
+                                "something went wrong",
+                                'You clicked the button!',
+                                'error'
+                              )
+                              localStorage.clear();
+                              history.push('/login');
+                    })
+                   
+                  }
+                  
+                }>
                   <i className="ni ni-user-run" />
                   <span>Logout</span>
                 </DropdownItem>

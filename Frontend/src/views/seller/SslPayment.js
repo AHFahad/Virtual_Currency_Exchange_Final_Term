@@ -49,10 +49,10 @@ import {
   import { useParams  } from "react-router";
   import Swal from 'sweetalert2';
   import { useHistory,Link } from "react-router-dom";
-
+  axios.defaults.headers.common = {'Authorization': `Bearer ${localStorage.getItem('token')}`};
   const baseURL="http://localhost:8000/api/pay";
   const SslPayment = (props) => {
-  
+    
     const history = useHistory();
     const initialize={
         total_amount:"900",
@@ -68,11 +68,13 @@ import {
     
     const _onSubmit= async(e)=>{
       e.preventDefault();
+      
      const payment={
         total_amount:paymentDetails.total_amount,
         }   
-        console.log(payment)
-        axios.post(baseURL,payment)
+
+        console.log(payment+"2")
+        axios.get(baseURL,payment)
         .then((res) => {
         console.log(res.data)
         Swal.fire(
@@ -137,9 +139,9 @@ import {
                   {/* form */}
                   
                   <Form
-                //   onSubmit={_onSubmit}
+                  // onSubmit={_onSubmit}
                   encType="multipart/form-data"
-                  action="http://localhost:8000/api/pay"
+                  action={"http://localhost:8000/api/pay/"+localStorage.getItem('id')}
                   method="POST"
                   >
                   

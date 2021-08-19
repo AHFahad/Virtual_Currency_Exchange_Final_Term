@@ -16,7 +16,9 @@ class ProfileController extends Controller
     public function index(Request $request)
     {
         // $user=User::find($request->session()->get('id'));
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
+
         // dd($user);
         // return view('seller.profile',compact('user'));
 
@@ -96,7 +98,8 @@ class ProfileController extends Controller
             ]);
         }
         // $request->session()->get('id')
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
 
         if($user->points >=10 || $user->prime_status=="prime"){
             if($user->prime_status!="prime")
@@ -164,7 +167,8 @@ class ProfileController extends Controller
             ]);
         }
             // $request->session()->get('id')
-            $user=User::find(1);
+            // $user=User::find(1);
+            $user= $request->user();
 
             if($user->password==$request->old_password){
                 $user->password=$request->new_password;

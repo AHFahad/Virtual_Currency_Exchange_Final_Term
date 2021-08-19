@@ -1,5 +1,5 @@
 <?php
-
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SslCommerzPaymentController;
@@ -16,16 +16,22 @@ use App\Http\Controllers\SslCommerzPaymentController;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
-
-
+Route::post('/login', 'LoginController@verify');
+// social login
+route::get('/sign-in/github','LoginController@github');
+route::get('/sign-in/github/redirect','LoginController@githubRedirect');
+route::get('/sign-in/google','LoginController@google');
+route::get('/sign-in/google/redirect','LoginController@googleRedirect');
+Route::get('/logout', 'LogoutController@index')->name('logout')->middleware('auth:sanctum');
 Route::group([
     'prefix'=>'seller',
     'namespace'=>'seller',
-    'as'=>'seller.'
+    'as'=>'seller.',
+    'middleware'=>['auth:sanctum']
 ],function()
 {
     route::resource('product','ProductController')->except('update');
@@ -49,7 +55,7 @@ Route::group([
 Route::get('/example1', [SslCommerzPaymentController::class, 'exampleEasyCheckout']);
 Route::get('/example2', [SslCommerzPaymentController::class, 'exampleHostedCheckout']);
 
-Route::post('/pay', [SslCommerzPaymentController::class, 'index']);
+Route::post('/pay/{id}', [SslCommerzPaymentController::class, 'index']);
 Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
 
 Route::post('/success', [SslCommerzPaymentController::class, 'success']);
@@ -57,3 +63,10 @@ Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
 Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
 
 Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
+
+Route::post('/tokens/create', function (Request $request) {
+    $user = User::whereEmail($request->email)->first();
+$tokenResult = $user->createToken("token")->plainTextToken;
+
+return $tokenResult;
+});

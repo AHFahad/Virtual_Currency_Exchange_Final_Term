@@ -17,7 +17,8 @@ class InvoiceController extends Controller
 {
     public function index($id,$seller_id,$buyer_id,Request $request){
         // $request->session()->get('id')
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
         // $order=Product::join('orders','orders.product_id','=','products.id')
         //                 ->join('users','users.id','=','products.seller_id')
         //                 ->where('products.seller_id',$user->id)

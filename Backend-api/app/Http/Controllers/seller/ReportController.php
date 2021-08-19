@@ -42,6 +42,7 @@ class ReportController extends Controller
         // $request->session()->get('id')
 
         $user=User::find(1);
+        $user= $request->user();
         $report=new Report;
         $report->seller_id=$user->id;
         $report->rep_description=$request->report;

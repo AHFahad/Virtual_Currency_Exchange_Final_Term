@@ -39,7 +39,8 @@ class PrimeController extends Controller
                 'error'=>'400'
             ]);
         }
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
         $payment =new Payment;
         $payment->seller_id=$user->id;
         $payment->package=$request->package;

@@ -21,7 +21,7 @@ function App() {
         <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
         <Route path="/seller" render={(props) => <SellerLayout {...props} />} />
         <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
-        <Redirect from="/" to="/admin/index" />
+            <Redirect from="/" to="/auth/login" />
       </Switch>
     </Router>
     </div>
