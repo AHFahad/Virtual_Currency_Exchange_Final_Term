@@ -121,29 +121,36 @@ class AdminHomeController extends Controller
     public function editUserInfo(Request $req, $id){
         $users = DB::table('users')->where('id', $id)->first();
 
-        return view('admin.adminEditUserInfo')->with('adminEditUserInfo',$users);
+        return response()->json([
+            'users' => $users
+        ]);
     }
     
-    public function verifyEditUserInfo(EditUserInfoRequest $req, $id){
+    public function verifyEditUserInfo(Request $req, $id){
         DB::table('users')
             ->where('id', $req->id)
             ->update(['name' => $req->name,
                       'email' => $req->email,
                       'password' => $req->password,
                       'address' => $req->address,
-                      'phone_number' => $req->phone,
+                      'phone_number' => $req->phone_number,
                       'prime_status' => $req->prime_status,
                       'status' => $req->status,
                       'updated_at' => date('Y/m/d H:i:s'),
                     ]);
-        return redirect()->route('adminViewAllUserInfo');
+        return response()->json([
+            'status' => "success"
+        ]);
     }
 
     public function deleteUserInfo(Request $req, $id){
         DB::table('users')
         ->where('id', $req->id)
         ->update(['status' => 'deleted']);
-        return redirect()->route('adminViewAllUserInfo');
+        
+        return response()->json([
+            'status' => "success"
+        ]);
     }
 
     public function viewAllTransaction(Request $req){
@@ -155,7 +162,7 @@ class AdminHomeController extends Controller
     }
 
     public function userReports(Request $req){
-        $reports = DB::table('reports')->get();
+        $reports = DB::table('reports')->orderBy('rep_id','desc')->get();
 
         return response()->json([
             'reports' => $reports
@@ -163,7 +170,7 @@ class AdminHomeController extends Controller
     }
 
     public function announcement(Request $req){
-        $announcements = DB::table('announcements')->where('status','=','active')->get();
+        $announcements = DB::table('announcements')->where('status','=','active')->orderBy('ann_id','desc')->get();
 
         return response()->json([
             'announcements' => $announcements
@@ -186,7 +193,10 @@ class AdminHomeController extends Controller
         DB::table('announcements')
         ->where('ann_id', $req->id)
         ->update(['status' => 'deleted']);
-        return redirect()->route('adminAnnouncement');
+        
+        return response()->json([
+            'status' => "success"
+        ]);
     }
 
     public function prime_approval(Request $req){
@@ -200,7 +210,9 @@ class AdminHomeController extends Controller
     public function editPrimeDuration(Request $req, $seller_id){
         $users = DB::table('prime_resets')->where('seller_id', $seller_id)->first();
 
-        return view('admin.editPrime_resets')->with('prime_resets',$users);
+        return response()->json([
+            'users' => $users
+        ]);
     }
 
     public function updatePrimeDuration(Request $req, $seller_id){
@@ -209,6 +221,9 @@ class AdminHomeController extends Controller
             ->update(['prime_expire_date' => $req->prime_expire_date,
                       'updated_at' => date('Y/m/d H:i:s'),
                     ]);
-        return redirect()->route('prime_approval');
+
+        return response()->json([
+            'status' => "success"
+        ]);
     }
 }

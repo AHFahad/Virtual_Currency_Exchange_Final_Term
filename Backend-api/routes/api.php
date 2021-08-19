@@ -128,7 +128,7 @@ Route::get('/admin/deleteAnnouncement/{id}', 'AdminHomeController@deleteAnnounce
 
 Route::get('/admin/prime_approval', 'AdminHomeController@prime_approval')->name('prime_approval');
 Route::get('/admin/editPrimeDuration/{seller_id}', 'AdminHomeController@editPrimeDuration')->name('editPrimeDuration');
-Route::post('/admin/updatePrimeDuration/{seller_id}', 'AdminHomeController@updatePrimeDuration')->name('updatePrimeDuration');
+Route::post('/admin/editPrimeDuration/{seller_id}', 'AdminHomeController@updatePrimeDuration')->name('updatePrimeDuration');
 
 //ssl ecommarz
 Route::get('/example1', [SslCommerzPaymentController::class, 'exampleEasyCheckout']);

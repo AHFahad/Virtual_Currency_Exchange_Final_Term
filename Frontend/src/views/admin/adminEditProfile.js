@@ -63,67 +63,67 @@ const Index = (props) => {
     address:'',
     phone_number:'',
     profile_picture:'',
-});
+  });
 
   
-    const [profDetails, setProfDetails] = useState([]);
-    const [id, setId] = useState([]);
-    const formdata = new FormData();
+  const [profDetails, setProfDetails] = useState([]);
+  const [id, setId] = useState([]);
+  const formdata = new FormData();
 
-    const getData=async()=>{
-      const response= await axios.get(baseURL);
-      setProfDetails(response.data.profDetails);
-      setId(response.data.id);
-      console.log(profDetails);
-     
+  const getData=async()=>{
+    const response= await axios.get(baseURL);
+    setProfDetails(response.data.profDetails);
+    setId(response.data.id);
+    console.log(profDetails);
+    
+  }
+
+  useEffect(()=>{
+    getData();
+  }, []);
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setProfDetails({ ...profDetails, [name]: value });
+    console.log(profDetails)
+  };
+
+  const _onSubmit= async(e)=>{
+    e.preventDefault();
+    const product={
+      name:profDetails.name,
+      email:profDetails.email,
+      password:profDetails.password,
+      address:profDetails.address,
+      phone_number:profDetails.phone_number,
+      profile_picture:profDetails.profile_picture,
     }
-
-    useEffect(()=>{
-      getData();
-    }, []);
-
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setProfDetails({ ...profDetails, [name]: value });
-        console.log(profDetails)
-      };
-
-    const _onSubmit= async(e)=>{
-        e.preventDefault();
-        const product={
-          name:profDetails.name,
-          email:profDetails.email,
-          password:profDetails.password,
-          address:profDetails.address,
-          phone_number:profDetails.phone_number,
-          profile_picture:profDetails.profile_picture,
-       }
-       console.log(product);
+    console.log(product);
        
-       //often forgets the file
-      let imagefile = document.querySelector('#file-input');
-      formdata.append("profile_picture", imagefile.files[0]);
-      console.log(formdata.get('profile_picture'));
-  
-  
-      formdata.append('name',product.name);
-      formdata.append('address',product.address);
-      formdata.append('phone_number',product.phone_number);
-      console.log("test2"+formdata.get('profile_picture_upload'));
+    //often forgets the file
+    let imagefile = document.querySelector('#file-input');
+    formdata.append("profile_picture", imagefile.files[0]);
+    console.log(formdata.get('profile_picture'));
+    
+    
+    formdata.append('name',product.name);
+    formdata.append('address',product.address);
+    formdata.append('phone_number',product.phone_number);
+    console.log("test2"+formdata.get('profile_picture_upload'));
          
-          axios.post(`http://localhost:8000/api/admin/editProfile/${id}`, product)
-          .then((res) => {
-            history.push(`/admin/home`)
-          if(res.data.error==400){
-            //setFormValidation(res.data.errorData)
-          }
-          }).catch((error) => {
-          console.log(error)
-          })
+    axios.post(`http://localhost:8000/api/admin/editProfile/${id}`, product)
+    .then((res) => {
+      history.push(`/admin/home`)
+    if(res.data.error==400){
+      //setFormValidation(res.data.errorData)
+    }
+    }).catch((error) => {
+      console.log(error)
+    })
   
           
         
-      };
+  };
 
 
   
@@ -140,10 +140,10 @@ return (
         <div className="form-group mt-5">
             <label for="formFile" className="form-label"><b>Change Profile Picture:</b></label> <br />
             {
-                      <Col lg='5'>
-                      <img className="card-img-top" style={{ maxHeight:270 ,width:'auto'}} src={ (profDetails.profile_picture)? "http://localhost:8000/"+profDetails.profile_picture:'http://localhost:8000/admin/default_pic.png'}
-                            alt="Card image cap"/>
-                    </Col>
+              <Col lg='5'>
+              <img className="card-img-top" style={{ maxHeight:270 ,width:'auto'}} src={ (profDetails.profile_picture)? "http://localhost:8000/"+profDetails.profile_picture:'http://localhost:8000/admin/default_pic.png'}
+                alt="Card image cap"/>
+              </Col>
             }
             <br />
             <input className="form-control" type="file" id="file-input" name="profile_picture_upload" onChange={handleInputChange} />

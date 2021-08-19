@@ -20,10 +20,11 @@ import adminEditProfile from "./views/admin/adminEditProfile.js";
 import adminAnnouncement from "./views/admin/adminAnnouncement.js";
 import adminViewAllUserInfo from "./views/admin/adminViewAllUserInfo.js";
 import createAdmin from "./views/admin/createAdmin.js";
+import adminEditUserInfo from "./views/admin/adminEditUserInfo.js";
 import adminViewAllTransaction from "./views/admin/adminViewAllTransaction.js";
 import adminUserReports from "./views/admin/adminUserReports.js";
 import prime_approval from "./views/admin/prime_approval.js";
-import Icons from "./views/examples/Icons.js";
+import editPrime_resets from "./views/admin/editPrime_resets.js";
 
 var routes = [
   {
@@ -59,6 +60,14 @@ var routes = [
     show:false,
   },
   {
+    path: "/adminEditUserInfo/:id",
+    name: "Edit User Info",
+    icon: "ni ni-badge",
+    component: adminEditUserInfo,
+    layout: "/admin",
+    show:false,
+  },
+  {
     path: "/viewAllTransaction",
     name: "Transaction History",
     icon: "ni ni-money-coins",
@@ -89,6 +98,14 @@ var routes = [
     component: prime_approval,
     layout: "/admin",
     show:true,
+  },
+  {
+    path: "/editPrimeDuration/:seller_id",
+    name: "Edit Prime Duration",
+    icon: "ni ni-folder-17",
+    component: editPrime_resets,
+    layout: "/admin",
+    show:false,
   },
 ];
 export default routes;

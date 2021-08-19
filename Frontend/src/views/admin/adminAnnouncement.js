@@ -87,22 +87,33 @@ import {
                
       };
 
+      const deleteEvent = async (e) => {
+        e.preventDefault();
+        console.log(e.target.id);
+        
+        const res = await axios.get(`http://localhost:8000/api/admin/deleteAnnouncement/${e.target.id}`);
+        if (res.data) {
+            console.log(res.data.message);
+            getData();  
+        }
+    }
+
 
     return (
         <div>
             <Header />
 
             <center>
-                <div class="mr-auto mt-5 mb-5">
+                <div className="mr-auto mt-5 mb-5">
                     <Button color="btn btn-primary" onClick={toggle}>Send Announcement</Button>
                     <Modal isOpen={modal} toggle={toggle} >
                         <ModalHeader toggle={toggle}>New Announcement</ModalHeader>
                         <ModalBody>
-                            <div class="modal-body">
+                            <div className="modal-body">
                                 <form onSubmit={_onSubmit}>
-                                    <div class="mb-3">
-                                        <label for="message-text" class="col-form-label">Message:</label>
-                                        <textarea class="form-control" name="desc" onChange={handleInputChange} ></textarea>
+                                    <div className="mb-3">
+                                        <label for="message-text" className="col-form-label">Message:</label>
+                                        <textarea className="form-control" name="desc" onChange={handleInputChange} ></textarea>
                                     </div>
                                     <ModalFooter>
                                         <Button type="submit" color="primary" onClick={toggle}>Send</Button>{' '}
@@ -145,8 +156,7 @@ import {
                                                     <td>
                                                         {e.created_at}</td>
                                                     <td>
-                                                        <Link to={`delete-event/${e.ann_id}`} className="btn btn-danger" > Delete </Link>
-                                                        {/* <button className="btn btn-danger btn-sm foat-end" onClick={deleteEvent}>Delete</button> */}
+                                                        <span className="btn btn-danger" id={e.ann_id} onClick={deleteEvent} > Delete </span>
                                                     </td>
                                                 </tr>
                                             );
