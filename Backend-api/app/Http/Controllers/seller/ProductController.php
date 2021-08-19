@@ -22,8 +22,9 @@ class ProductController extends Controller
     {
 
         // $request->session()->get('id')
-        $user=User::find(1);
-        $product=Product::where('seller_id',1)->get();
+        // $user=User::find(1);
+        $user= $request->user();
+        $product=Product::where('seller_id',$user->id)->get();
 
         // return view('seller.sellerProducts',compact('product','user'));
 
@@ -76,7 +77,8 @@ class ProductController extends Controller
         }
         // $request->session()->get('id')
         $product = new Product;
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
         $extension="";
         if($user->points >=10 || $user->prime_status=="prime"){
             if($user->prime_status!="prime")
@@ -100,7 +102,7 @@ class ProductController extends Controller
             $product->from_currency= $request->input('from_currency');
             $product->To_currency= $request->input('To_currency');
             // $product->seller_id=$request->session()->get('id');
-            $product->seller_id=1;
+            $product->seller_id=$user->id;
             if($product->save()){
                 // $request->session()->flash('msg',"Product Added Successfully!");
                 return response()->json([
@@ -150,7 +152,8 @@ class ProductController extends Controller
     public function show(Product $product,Request $request)
     {
         // $user=User::find($request->session()->get('id'));
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
         $payment_methods = array('none',"Bkash", "Nagod", "roket","Mkash","Ukash","Gkash");
         $counter=0;
         $counter2=0;
@@ -202,7 +205,8 @@ class ProductController extends Controller
     public function edit( $id,Request $request)
     {
         // $request->session()->get('id')
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
         $payment_methods = array('none',"Bkash", "Nagod", "roket","Mkash","Ukash","Gkash");
         $counter=0;
         $counter2=0;
@@ -249,7 +253,8 @@ class ProductController extends Controller
                 'error'=>'400'
             ]);
         }
-         $user=User::find(1);
+        //  $user=User::find(1);
+        $user= $request->user();
             if($user->points >=5 || $user->prime_status=="prime"){
                 if($user->prime_status!="prime"){
                     $user->points=$user->points-5;
@@ -330,7 +335,8 @@ class ProductController extends Controller
 
     public function search(Request $request){
         // $request->session()->get('id')
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
         $search = $request->search;
         $product=Product::where('seller_id',$user->id)
                         ->where('name','LIKE','%'. $search .'%')
