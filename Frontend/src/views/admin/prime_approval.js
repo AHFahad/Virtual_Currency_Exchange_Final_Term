@@ -91,8 +91,7 @@ import {
                                     <td>{ e.payment_method }</td>
                                     <td>{ e.created_at }</td>
                                     <td>
-                                        <Link to={`delete-event/${e.id}`} className="btn btn-warning" > Edit </Link>
-                                        <Link to={`delete-event/${e.id}`} className="btn btn-danger" > Delete </Link>
+                                        <Link to={`/admin/editPrimeDuration/${e.seller_id}`} className="btn btn-primary" > Update Prime Duration </Link>
                                     </td>
                                 </tr>
                             );
