@@ -96,42 +96,59 @@ class ProfileController extends Controller
                 'status' => 'error',
                 'error'=>'400'
             ]);
+        } else{
+                $user= $request->user();
+
+                if($user->points >=10 || $user->prime_status=="prime"){
+                    if($user->prime_status!="prime")
+                    $user->points=$user->points-10;
+                    if($request->hasFile('profile_picture')){
+                        $extension = $request->profile_picture->getClientOriginalExtension();
+                        $newName = date('U').'.'.$extension;
+                        $folderPath = "seller/image/profile/";
+                        if($user->profile_picture){
+                            try {
+                                unlink($user->profile_picture);
+                            } catch (\Exception $e) {
+
+                            }
+                        }
+                        $user->profile_picture = $folderPath.$newName;
+                        $request->profile_picture->move($folderPath, $newName);
+                        }
+                        $user->name=$request->input('name');
+                        // $user->email=$request->input('email');
+                        $user->address=$request->input('address');
+                        $user->phone_number=$request->input('phone_number');
+
+                        if($user->update()){
+                            return response()->json([
+                                'msg' => "Profile is Updated!",
+                                'user' => $user,
+                                'status'=>'success'
+                            ]);
+                        } else{
+                            return response()->json([
+                                'msg' => "this is the error",
+                                'user' => $user,
+                                'status'=>'error'
+                            ]);
+                        }
+
+
+                }
+                else{
+                    // $request->session()->flash('msg'," you do not have enough points");
+                    return response()->json([
+                        'msg' => " you do not have enough points",
+                        'user' => $user,
+                        'status'=>'error'
+                    ]);
+            }
         }
         // $request->session()->get('id')
         // $user=User::find(1);
-        $user= $request->user();
 
-        if($user->points >=10 || $user->prime_status=="prime"){
-            if($user->prime_status!="prime")
-            $user->points=$user->points-10;
-            if($request->hasFile('profile_picture')){
-                if($user->profile_picture)unlink($user->profile_picture);
-                $extension = $request->profile_picture->getClientOriginalExtension();
-                $newName = date('U').'.'.$extension;
-                $folderPath = "seller/image/profile/";
-                $user->profile_picture = $folderPath.$newName;
-                $request->profile_picture->move($folderPath, $newName);
-                }
-                $user->name=$request->input('name');
-                // $user->email=$request->input('email');
-                $user->address=$request->input('address');
-                $user->phone_number=$request->input('phone_number');
-                $user->update();
-                // $request->session()->flash('msg','Profile is Updated!');
-                return response()->json([
-                    'msg' => "Profile is Updated!",
-                    'user' => $user,
-                    'status'=>'success'
-                ]);
-        }
-        else{
-            // $request->session()->flash('msg'," you do not have enough points");
-            return response()->json([
-                'msg' => " you do not have enough points",
-                'user' => $user,
-                'status'=>'error'
-            ]);
-        }
 
         // return redirect()->back();
 

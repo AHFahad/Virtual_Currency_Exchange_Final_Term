@@ -1,4 +1,3 @@
-
 import {
     Button,
     Card,
@@ -27,7 +26,7 @@ import {
         if(localStorage.getItem('token')){
             const type=localStorage.getItem('type');
             if(type=="admin"){
-                history.push(`/admin/index`);
+                history.push(`/admin/home`);
             }
             else if(type=="seller" ){
                 history.push(`/seller/index`); 
@@ -80,11 +79,12 @@ import {
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('type', res.data.user.type);
             localStorage.setItem('id', res.data.user.id);
+            localStorage.setItem('user', JSON.stringify(res.data.user));
             
             axios.defaults.headers.common = {'Authorization': `Bearer ${localStorage.getItem('token')}`};
             // console.log(localStorage.getItem('token'));
             if(res.data.user.type=="admin"){
-                history.push(`/admin/index`);
+                history.push(`/admin/home`);
             }
             else if(res.data.user.type=="seller" ){
                 history.push(`/seller/index`); 

@@ -96,7 +96,6 @@ const Index = (props) => {
           password:profDetails.password,
           address:profDetails.address,
           phone_number:profDetails.phone_number,
-          profile_picture:profDetails.profile_picture,
        }
        console.log(product);
        
@@ -109,7 +108,9 @@ const Index = (props) => {
       formdata.append('name',product.name);
       formdata.append('address',product.address);
       formdata.append('phone_number',product.phone_number);
-      console.log("test2"+formdata.get('profile_picture_upload'));
+      formdata.append('email',product.email);
+      formdata.append('password',product.password);
+      console.log("test2"+formdata.get('profile_picture'));
          
           axios.post(`http://localhost:8000/api/admin/editProfile/${id}`, product)
           .then((res) => {
