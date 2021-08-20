@@ -45,7 +45,6 @@ import {
   const ViewAllUserInfo = () => {
 
 
-
     const [viewAllUserInfo, setViewAllUserInfo] = useState([]);
     const getData=async()=>{
       const response= await axios.get(baseURL);
@@ -59,6 +58,17 @@ import {
       getData();
 
     }, []);
+
+    const deleteEvent = async (e) => {
+        e.preventDefault();
+        console.log(e.target.id);
+        
+        const res = await axios.get(`http://localhost:8000/api/admin/adminDeleteUserInfo/${e.target.id}`);
+        if (res.data) {
+            console.log(res.data.message);
+            getData();  
+        }
+    }
 
     // const _onSubmit= async(e)=>{
     //     e.preventDefault();
@@ -142,8 +152,8 @@ import {
                                     <td>{e.created_at }</td>
                                     <td>{e.updated_at }</td>
                                     <td>
-                                        <Link to={`delete-event/${e.id}`} className="btn btn-warning" > Edit </Link>
-                                        <Link to={`delete-event/${e.id}`} className="btn btn-danger" > Delete </Link>
+                                        <Link to={`/admin/adminEditUserInfo/${e.id}`} className="btn btn-warning" > Edit </Link>
+                                        <span className="btn btn-danger" id={e.id} onClick={deleteEvent} > Delete </span>
                                     </td>
                                 </tr>
                             );

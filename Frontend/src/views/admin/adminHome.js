@@ -95,11 +95,11 @@ return (
     <>
       <Header />
       {/* Page content */}
-      <div class="text-center mt-5">
+      <div className="text-center mt-5">
         <h1>Welcome Home</h1>
       </div>
 
-      <div class="text-center mt-5">
+      <div className="text-center mt-5">
         <h1><u>Site Overview</u></h1>
       </div>
 

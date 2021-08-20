@@ -109,10 +109,6 @@ import {
                                     <td>{e.status }</td>
                                     <td>{e.created_at }</td>
                                     <td>{e.updated_at }</td>
-                                    <td>
-                                        <Link to={`delete-event/${e.id}`} className="btn btn-warning" > Edit </Link>
-                                        <Link to={`delete-event/${e.id}`} className="btn btn-danger" > Delete </Link>
-                                    </td>
                                 </tr>
                             );
                         })
