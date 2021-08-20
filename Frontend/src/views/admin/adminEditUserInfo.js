@@ -68,6 +68,7 @@ const Index = (props) => {
 
   
     const [users, setUsers] = useState([]);
+    const[formValidation,setFormValidation]=useState([]);
     const formdata = new FormData();
 
     const getData=async()=>{
@@ -113,10 +114,11 @@ const Index = (props) => {
          
           axios.post(baseURL+eid, product)
           .then((res) => {
-            history.push(`/admin/viewAllUserInfo`)
+            // history.push(`/admin/viewAllUserInfo`)
           if(res.data.error==400){
-            //setFormValidation(res.data.errorData)
+            setFormValidation(res.data.errorData)
           }
+          if(res.data.status=='success') history.push(`/admin/viewAllUserInfo`);
           }).catch((error) => {
           console.log(error)
           })
@@ -140,26 +142,31 @@ return (
         <div className="form-group">
             <label className="form-label">Name</label>
             <input type="text" className="form-control" name="name" value= { users.name } onChange={handleInputChange} />
+            <span className="text-danger">{formValidation.name}</span>
         </div>
 
         <div className="form-group">
             <label className="form-label">Email</label>
             <input type="email" className="form-control" name="email" value={ users.email } onChange={handleInputChange} />
+            <span className="text-danger">{formValidation.email}</span>
         </div>
 
         <div className="form-group">
             <label className="form-label">Password</label>
             <input type="password" className="form-control" name="password" value={ users.password } onChange={handleInputChange} />
+            <span className="text-danger">{formValidation.password}</span>
         </div>
 
         <div className="form-group">
             <label className="form-label">Address</label>
             <input type="text" className="form-control" name="address" value={ users.address } onChange={handleInputChange} />
+            <span className="text-danger">{formValidation.address}</span>
         </div>
 
         <div className="form-group">
             <label className="form-label">Phone Number</label>
             <input type="number" className="form-control" name="phone_number" value={ users.phone_number } onChange={handleInputChange} />
+            <span className="text-danger">{formValidation.phone_number}</span>
         </div>
 
         <div className="form-group">
@@ -169,6 +176,7 @@ return (
                 <option value="normal">normal</option>
                 <option value="prime">prime</option>
             </select>
+            <span className="text-danger">{formValidation.prime_status}</span>
         </div>
 
         <div className="form-group">
@@ -178,6 +186,7 @@ return (
                 <option value="active">active</option>
                 <option value="deactive">deactive</option>
             </select>
+            <span className="text-danger">{formValidation.status}</span>
         </div>
         <br />
 

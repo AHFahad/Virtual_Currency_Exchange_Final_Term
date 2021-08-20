@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\EditProfileRequest;
 use App\Http\Requests\EditUserInfoRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Input;
 
 class AdminHomeController extends Controller
@@ -45,6 +46,9 @@ class AdminHomeController extends Controller
     }
 
     public function verifyAddAdmin(Request $req){
+
+        $user= $req->user();
+
         DB::table('users')->insert(
             ['name' => $req->name,
             'email' => $req->email,
@@ -53,7 +57,7 @@ class AdminHomeController extends Controller
             'phone_number' => $req->phone_number,
             'nid_number' => $req->nid_number,
             'type' => 'admin',
-            'aproved_by' => 1,
+            'aproved_by' => $user->id,
             'status' => 'active',
             'created_at' => date('Y/m/d H:i:s'),
         ]);
@@ -64,16 +68,41 @@ class AdminHomeController extends Controller
 
     public function editProfile(Request $req){
 
-        //$id = $req->session()->get('id');
-        $profDetails = DB::table('users')->where('id', 1)->first();
+        $user= $req->user();
+        $profDetails = DB::table('users')->where('id', $user->id)->first();
 
         return response()->json([
             'profDetails' => $profDetails,
-            'id' =>1
+            'id' => $user->id
         ]);
     }
 
     public function verifyEditProfile(Request $req, $id){
+
+
+        $validator = Validator::make($req->all(), [
+            'name' => 'required|max:20|min:4',
+            'email' => 'required|max:20|min:11',
+            'password' => 'required|max:20|min:8|regex:/^.+@.+$/',
+            'address' => 'required|max:50|min:3',
+            'phone_number' => 'required|max:11|min:11',
+         ],
+         [
+            'name.required' => 'Must provide a name',
+            'email.required' => 'Must provide a email.',
+            'password.required' => 'Must provide a password within 8-20 Characters',
+            'password.regex' => 'Password must have atleast one of these characters: "/^.+@.+$/"'
+        ]
+        );
+
+         if ($validator->fails()) {
+            return response()->json([
+                "errorData"=>$validator->errors(),
+                'msg' => "Validation Error",
+                'status' => 'error',
+                'error'=>'400'
+            ]);
+        }
 
 
         if($req->hasFile('profile_picture')){
@@ -106,7 +135,7 @@ class AdminHomeController extends Controller
                     ]);
         }
         return response()->json([
-            'status' => $req->name
+            'status' => "success"
         ]);
     }
 
@@ -127,6 +156,35 @@ class AdminHomeController extends Controller
     }
     
     public function verifyEditUserInfo(Request $req, $id){
+
+        $validator = Validator::make($req->all(), [
+            'name' => 'required|max:20|min:4',
+            'email' => 'required|max:20|min:11',
+            'password' => 'required|max:20|min:8|regex:/^.+@.+$/',
+            'address' => 'required|max:50|min:3',
+            'phone_number' => 'required|max:11|min:11',
+            'prime_status' => 'required',
+            'status' => 'required',
+         ],
+         [
+            'name.required' => 'Must provide a name',
+            'email.required' => 'Must provide a email.',
+            'password.required' => 'Must provide a password within 8-20 Characters',
+            'password.regex' => 'Password must have atleast one of these characters: "/^.+@.+$/"',
+            'prime_status.required' => 'Must choose one',
+            'status.required' => 'Must choose one'
+        ]
+        );
+
+         if ($validator->fails()) {
+            return response()->json([
+                "errorData"=>$validator->errors(),
+                'msg' => "Validation Error",
+                'status' => 'error',
+                'error'=>'400'
+            ]);
+        }
+
         DB::table('users')
             ->where('id', $req->id)
             ->update(['name' => $req->name,
@@ -178,8 +236,11 @@ class AdminHomeController extends Controller
     }
 
     public function sendAnnouncement(Request $req){
+
+        $user= $req->user();
+
         DB::table('announcements')->insert(
-            ['admin_id' => 1,
+            ['admin_id' => $user->id,
             'description' => $req->desc,
             'created_at' => date('Y/m/d H:i:s'),
             'status' => 'active'

@@ -52,6 +52,7 @@ import Header from "components/Headers/Header.js";
 import Swal from 'sweetalert2';
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import ProfileDetails from 'views/seller/Profile';
 const baseURL="http://localhost:8000/api/admin/editProfile"
 
 const Index = (props) => {
@@ -67,6 +68,7 @@ const Index = (props) => {
 
   
   const [profDetails, setProfDetails] = useState([]);
+  const[formValidation,setFormValidation]=useState([]);
   const [id, setId] = useState([]);
   const formdata = new FormData();
 
@@ -80,6 +82,7 @@ const Index = (props) => {
 
   useEffect(()=>{
     getData();
+    console.group(ProfileDetails.profile_picture)
   }, []);
 
   const handleInputChange = (event) => {
@@ -107,16 +110,20 @@ const Index = (props) => {
     
     
     formdata.append('name',product.name);
+    formdata.append('email',product.email);
+    formdata.append('password',product.password);
     formdata.append('address',product.address);
     formdata.append('phone_number',product.phone_number);
     console.log("test2"+formdata.get('profile_picture_upload'));
          
-    axios.post(`http://localhost:8000/api/admin/editProfile/${id}`, product)
+    axios.post(`http://localhost:8000/api/admin/editProfile/${id}`, formdata)
     .then((res) => {
-      history.push(`/admin/home`)
-    if(res.data.error==400){
-      //setFormValidation(res.data.errorData)
-    }
+      // history.push(`/admin/home`)
+      if(res.data.error==400){
+        setFormValidation(res.data.errorData)
+        console.log(formValidation.name)
+      }
+      if(res.data.status=='success') history.push(`/admin/home`);
     }).catch((error) => {
       console.log(error)
     })
@@ -151,31 +158,31 @@ return (
         <div className="form-group">
             <label className="form-label">Name</label>
             <input type="text" className="form-control" name="name" value= { profDetails.name } onChange={handleInputChange} />
-            {/* </input><label className="errorText" style="color: red"> {{ $errors->first('name')}}</label> */}
+            <span className="text-danger">{formValidation.name}</span>
         </div>
 
         <div className="form-group">
             <label className="form-label">Email Address</label>
             <input type="email" className="form-control" name="email" value={ profDetails.email } onChange={handleInputChange} />
-            {/* <label className="errorText" style="color: red"> {{ $errors->first('email')}}</label> */}
+            <span className="text-danger">{formValidation.email}</span>
         </div>
 
         <div className="form-group">
             <label className="form-label">Password</label>
             <input type="password" className="form-control" name="password" value= { profDetails.password } onChange={handleInputChange} />
-            {/* <label className="errorText" style="color: red"> {{ $errors->first('password')}}</label> */}
+            <span className="text-danger">{formValidation.password}</span>
         </div>
 
         <div className="form-group">
             <label className="form-label">Address</label>
             <input type="text" className="form-control" name="address" value= { profDetails.address } onChange={handleInputChange} />
-            {/* <label className="errorText" style="color: red"> {{ $errors->first('address')}}</label> */}
+            <span className="text-danger">{formValidation.address}</span>
         </div>
 
         <div className="form-group">
             <label className="form-label">Phone Number</label>
-            <input type="number" className="form-control" name="phone" value= { profDetails.phone_number } onChange={handleInputChange} />
-            {/* <label className="errorText" style="color: red"> {{ $errors->first('phone')}}</label> */}
+            <input type="number" className="form-control" name="phone_number" value= { profDetails.phone_number } onChange={handleInputChange} />
+            <span className="text-danger">{formValidation.phone_number}</span>
         </div><br />
 
         <button type="submit" className="btn btn-primary">Update</button>
