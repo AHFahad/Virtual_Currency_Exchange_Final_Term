@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+//header('Access-Control-Allow-Origin:*');
 use App\Models\Follow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -12,25 +12,40 @@ use App\Models\Product;
 
 class UserController extends Controller
 {
-    public function dashboard(Request $req){
-        $user = User::find($req->session()->get('id'));
+    public function dashboard(Request $req, $id){
+        $user = User::find($id);
         $products = Product::orderBy('created_at','ASC')->get();
 
-        return view('user.dashboard',compact('user','products'));
+        return response()->json([
+            'user' => $user,
+            'products' => $products,
+            'status'=>'success'
+        ]);
+
+        //return view('user.dashboard',compact('user','products'));
     }
-    public function profile(Request $req){
-        $user = User::find($req->session()->get('id'));
-        return view('user.profile',compact('user'));
+    public function profile(Request $req, $id){
+        //$user = User::find($req->session()->get('id'));
+        $user = User::find($id);
+        //return view('user.profile',compact('user'));
+        return response()->json([
+            'user' => $user,
+            'status'=>'success'
+        ]);
     }
-    public function history(Request $req){
+    public function history(Request $req, $id){
 
         $orders=Product::join('orders','orders.product_id','=','products.id')
                         ->join('users','users.id','=','products.seller_id')
-                        ->where('orders.buyer_id',$req->session()->get('id'))
+                        ->where('orders.buyer_id',$id)
                         ->get(['orders.id','users.name as sellerName','orders.created_at','products.name as productName','orders.status']);
                         //dd($orders);
 
-        return view('user.history',compact('orders'));
+        return response()->json([
+            'orders' => $orders,
+            'status'=>'success'
+        ]);
+        //return view('user.history',compact('orders'));
     }
 
     public function details(Request $req,$id){
@@ -47,8 +62,15 @@ class UserController extends Controller
 
         $seller_list = User::find($product_list->seller_id);
 
+        return response()->json([
+            'order_list' => $order_list,
+            'product_list' => $product_list,
+            'seller_list' => $seller_list,
+            'status'=>'success'
+        ]);
 
-        return view('user.detailsHistory',compact('order_list','product_list','seller_list'));
+
+        //return view('user.detailsHistory',compact('order_list','product_list','seller_list'));
     }
 
     public function details_update(Request $req,$id){
@@ -113,64 +135,87 @@ class UserController extends Controller
         return back();
     }
 
-    public function order(Request $req, $id){
+    public function order(Request $req, $uid, $id){
         $product = Product::find($id);
 
         $seller = User::find($product->seller_id);
 
-        $follows = Follow::where('user_id',$req->session()->get('id'))->get();
+        $follows = Follow::where('user_id',$uid)->get();
         //dd($follows);
-
-        return view('user.order',compact('product','seller','follows'));
+        return response()->json([
+            'product' => $product,
+            'seller' => $seller,
+            'follows' => $follows,
+            'status'=>'success'
+        ]);
+        //return view('user.order',compact('product','seller','follows'));
     }
-    public function orderConfirm(Request $req,$id){
+    public function orderConfirm(Request $req,$uid,$id){
         // addtional database work
-
+        
         $product = Product::find($id);
 
-        if($req->has('gameId')){
-        Validator::make($req->all(), [
-            'phone' => 'required|min:11|max:11',
-            'transection_number' => 'required',
-            'gameId' => 'required',
-            'reply' => 'required',
-        ])->validate();
+        // if($req->has('gameId')){
+        // Validator::make($req->all(), [
+        //     'phone' => 'required|min:11|max:11',
+        //     'transection_number' => 'required',
+        //     'gameId' => 'required',
+        //     'reply' => 'required',
+        // ])->validate();
 
-        Order::insert([
-            'product_id' => $id,
-            'buyer_id' => $req->session()->get('id'),
-            'price_on_selling_time' => $product->price,
-            'transection_no' => $req->transection_number,
-            'amount' => $req->quantity,
-            'transection_number_of_sender' => $req->phone,
-            'buyer_reply' => $req->reply,
-            //'profile_picture' => $req->photo,
-            //'nid_card_picture' => $req->photo,
-            'game_id' => $req->gameId,
-            'status' => 'process',
-        ]);
+        // Order::insert([
+        //     'product_id' => $id,
+        //     'buyer_id' => $req->session()->get('id'),
+        //     'price_on_selling_time' => $product->price,
+        //     'transection_no' => $req->transection_number,
+        //     'amount' => $req->quantity,
+        //     'transection_number_of_sender' => $req->phone,
+        //     'buyer_reply' => $req->reply,
+        //     //'profile_picture' => $req->photo,
+        //     //'nid_card_picture' => $req->photo,
+        //     'game_id' => $req->gameId,
+        //     'status' => 'process',
+        // ]);
 
-        }
+        // }
 
-        else{
-            Validator::make($req->all(), [
-                'phone' => 'required|min:11|max:11',
-                'transection_number' => 'required',
-                'reply' => 'required',
-            ])->validate();
-
+        //else{
+            $validator = Validator::make($req->all(), [
+                'transection_number_of_sender' => 'required|min:11|max:11',
+                'transection_no' => 'required',
+                'buyer_reply' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    "errorData"=>$validator->errors(),
+                    'msg' => "Validation Error",
+                    'status' => 'error',
+                    'error'=>'400'
+                ]);
+            }
             Order::insert([
                 'product_id' => $id,
-                'buyer_id' => $req->session()->get('id'),
+                'buyer_id' => $uid,
                 'price_on_selling_time' => $product->price,
                 'transection_no' => $req->transection_number,
-                'amount' => $req->quantity,
-                'transection_number_of_sender' => $req->phone,
-                'buyer_reply' => $req->reply,
+                'amount' => $req->amount,
+                'transection_number_of_sender' => $req->transection_number_of_sender,
+                'buyer_reply' => $req->buyer_reply,
                 'status' => 'process',
             ]);
 
-        }
+            // Order::insert([
+            //     'product_id' => $id,
+            //     'buyer_id' => $uid,
+            //     'price_on_selling_time' => $product->price,
+            //     'transection_no' => $req->input('transection_number'),
+            //     'amount' => $req->input('amount'),
+            //     'transection_number_of_sender' => $req->input('transection_number_of_sender'),
+            //     'buyer_reply' => $req->input('buyer_reply'),
+            //     'status' => 'process',
+            // ]);
+
+        //}
 
         // if($validator->fails()){
         //     return back()->withErrors($validator)->withInput();

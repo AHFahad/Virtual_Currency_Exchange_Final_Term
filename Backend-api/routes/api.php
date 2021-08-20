@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SslCommerzPaymentController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RegistrationController;
 
 
 /*
@@ -57,3 +59,12 @@ Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
 Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
 
 Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
+
+
+//buyer
+Route::get('/user/profile/{id}', [UserController::class,'profile'])->name('user.profile');
+Route::get('/user/history/{id}', [UserController::class,'history'])->name('user.history');
+Route::get('/user/details/{id}', [UserController::class,'details'])->name('user.details');
+Route::get('/user/dashboard/{id}', [UserController::class,'dashboard']);
+Route::get('/user/order/{uid}/{id}', [UserController::class,'order']);
+Route::post('/user/order/{uid}/{id}', [UserController::class,'orderConfirm']);

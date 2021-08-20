@@ -181,11 +181,11 @@ Route::group([
 
 
     // user or buyer
-    Route::get('/user/dashboard', [UserController::class,'dashboard'])->name('user.dashboard');
+    Route::get('/user/dashboard/{id}', [UserController::class,'dashboard'])->name('user.dashboard');
 
-    Route::get('/user/profile', [UserController::class,'profile'])->name('user.profile');
+    Route::get('/user/profile/{id}', [UserController::class,'profile'])->name('user.profile');
 
-    Route::get('/user/history', [UserController::class,'history'])->name('user.history');
+    Route::get('/user/history/{id}', [UserController::class,'history'])->name('user.history');
 
     Route::get('/user/details/{id}', [UserController::class,'details'])->name('user.details');
     Route::post('/user/details/{id}', [UserController::class,'details_update']);
@@ -195,7 +195,7 @@ Route::group([
 
     Route::get('/user/orders', [UserController::class,'orders'])->name('user.orders');
 
-Route::get('/user/order/{id}', [UserController::class,'order'])->name('user.order');
+Route::get('/user/order/{id}/{uid}', [UserController::class,'order'])->name('user.order');
 Route::post('/user/order/{id}', [UserController::class,'orderConfirm'])->name('user.orderConfirm');
 
     Route::get('/user/notification', [UserController::class,'notification'])->name('user.notification');
