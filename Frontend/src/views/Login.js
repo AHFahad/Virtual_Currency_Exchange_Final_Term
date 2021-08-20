@@ -27,7 +27,7 @@ import {
         if(localStorage.getItem('token')){
             const type=localStorage.getItem('type');
             if(type=="admin"){
-                history.push(`/admin/index`);
+                history.push(`/admin/home`);
             }
             else if(type=="seller" ){
                 history.push(`/seller/index`); 
@@ -84,7 +84,7 @@ import {
             axios.defaults.headers.common = {'Authorization': `Bearer ${localStorage.getItem('token')}`};
             // console.log(localStorage.getItem('token'));
             if(res.data.user.type=="admin"){
-                history.push(`/admin/index`);
+                history.push(`/admin/home`);
             }
             else if(res.data.user.type=="seller" ){
                 history.push(`/seller/index`); 
