@@ -1,21 +1,3 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-// reactstrap components
 import {
     Badge,
     Card,
@@ -41,7 +23,6 @@ import {
     Col,
     Button
   } from "reactstrap";
-  // core components
   import Header from "components/Headers/Header.js";
   import axios from "axios";
   import React, { useState, useEffect } from 'react';
@@ -106,56 +87,24 @@ import {
     return (
       <>
         <Header />
-        {/* Page content */}
         <Container className="mt--7" fluid>
-        
         <Row>
-          {/* <Col className="order-xl-2 mb-5 mb-xl-0" xl="4">
-            
-          </Col> */}
           <Col className="order-xl-1" xl="12">
             <Card className="bg-secondary shadow">
               <CardHeader className="bg-white border-0">
-                <Row className="align-items-center">
-                  <Col xs="8">
-                 
-                     <h3 className="mb-0">Edit proudct</h3>
-                 
-                    
-                  </Col>
-                  <Col className="text-right" xs="4">
-                    {/* <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Settings
-                    </Button> */}
-                  </Col>
-                </Row>
               </CardHeader>
               <CardBody>
                 
                   <h6 className="heading-small text-muted mb-4">
                     Payment Details...
                   </h6>
-                  
-
-
                   {/* form */}
-                  
                   <Form
                   onSubmit={_onSubmit}
                   encType="multipart/form-data"
                   >
-                  
-                  
                   <div className="pl-lg-4">
-                   
-                 
                     <Row>
-                     
                       <Col lg="6">
                         <FormGroup>
                           <label
@@ -218,12 +167,7 @@ import {
                         </FormGroup>
                       </Col>
                     </Row>
-                   
                   </div>
-                  
-                  
-                
-                 
                     <Row className="align-items-center">
                   <Col xs="4">
                     <Button
@@ -246,8 +190,6 @@ import {
             </Card>
           </Col>
         </Row>
-        
-          
         </Container>
       </>
     );

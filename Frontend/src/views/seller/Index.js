@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 
 
 import classnames from "classnames";
-import Chart from "chart.js";
 
 import { Line, Bar } from "react-chartjs-2";
 // reactstrap components
@@ -23,14 +22,6 @@ import {
   Label,
 } from "reactstrap";
 
-// core components
-import {
-  chartOptions,
-  parseOptions,
-  chartExample1,
-  chartExample2,
-} from "variables/charts.js";
-
 import Header from "components/Headers/Header.js";
 import Swal from 'sweetalert2';
 import { useHistory } from "react-router-dom";
@@ -41,11 +32,8 @@ const baseURL="http://localhost:8000/api/seller/dashboard";
 const Index = (props) => {
 
   const [activeNav, setActiveNav] = useState(1);
-  const [chartExample1Data, setChartExample1Data] = useState("data1");
 
-  if (window.Chart) {
-    parseOptions(Chart, chartOptions());
-  }
+  
 
   
     const [processingOrder, setProcessingOrder] = useState([]);
@@ -58,6 +46,7 @@ const Index = (props) => {
     const getData=async()=>{
       const response= await axios.get(baseURL);
       localStorage.setItem("id",response.data.user.id);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       setProcessingOrder(response.data.processingOrder);
       setCompletedOrder(response.data.completedOrder);
       setCancelledOrder(response.data.cancelledOrder);
@@ -77,7 +66,6 @@ const Index = (props) => {
   const toggleNavs = (e, index) => {
     e.preventDefault();
     setActiveNav(index);
-    setChartExample1Data("data" + index);
   };
 
   const handleInputChange = (event) => {

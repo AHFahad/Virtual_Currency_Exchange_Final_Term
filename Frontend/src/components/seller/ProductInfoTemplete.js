@@ -103,6 +103,7 @@ const ProductInfoTemplete = (productDetails)=>{
                             Payment method:
                           </label>
                           {productDetails.paymentMethods[productDetails.from_currency]}
+                          {console.log( productDetails.paymentMethods[productDetails.from_currency])}
                         </FormGroup>
                       </Col>
                       {productDetails.To_currency?

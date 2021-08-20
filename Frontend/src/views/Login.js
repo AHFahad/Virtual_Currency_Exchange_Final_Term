@@ -1,4 +1,3 @@
-
 import {
     Button,
     Card,
@@ -80,6 +79,7 @@ import {
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('type', res.data.user.type);
             localStorage.setItem('id', res.data.user.id);
+            localStorage.setItem('user', JSON.stringify(res.data.user));
             
             axios.defaults.headers.common = {'Authorization': `Bearer ${localStorage.getItem('token')}`};
             // console.log(localStorage.getItem('token'));

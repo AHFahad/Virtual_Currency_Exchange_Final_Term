@@ -231,7 +231,6 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // $request->session()->get('id')
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:40|min:3',
             'description' => 'required|max:500|min:10',
@@ -253,7 +252,6 @@ class ProductController extends Controller
                 'error'=>'400'
             ]);
         }
-        //  $user=User::find(1);
         $user= $request->user();
             if($user->points >=5 || $user->prime_status=="prime"){
                 if($user->prime_status!="prime"){
@@ -262,7 +260,15 @@ class ProductController extends Controller
                 }
                 $product=Product::find($id);
                 if($request->hasFile('product_picture')){
-                if($product->product_picture)unlink($product->product_picture);
+                if($product->product_picture){
+
+                        try {
+                            unlink($product->product_picture);
+                        } catch (\Exception $e) {
+
+                        }
+
+                }
                 $extension = $request->product_picture->getClientOriginalExtension();
                 $newName = date('U').'.'.$extension;
                 $folderPath = "seller/image/product/";
@@ -295,7 +301,6 @@ class ProductController extends Controller
              }
 
 
-        // return redirect()->back();
     }
 
     /**

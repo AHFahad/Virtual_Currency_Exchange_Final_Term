@@ -73,12 +73,14 @@ class StatementController extends Controller
         // $user=User::find(1);
         $user= $request->user();
         $order=Order::find($id);
+        $payment_methods = array('none',"Bkash", "Nagod", "roket","Mkash","Ukash","Gkash");
         $product=Product::find($order->product_id);
         // return view('seller.statementdetails',compact('user','order','product'));
         return response()->json([
             'product' => $product,
             'user' => $user,
             'order' => $order,
+            'payment_methods' => $payment_methods,
             'status'=>'success'
         ]);
     }

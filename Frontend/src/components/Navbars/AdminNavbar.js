@@ -20,8 +20,31 @@ import axios from "axios";
 import Swal from 'sweetalert2';
 import React, { useState, useEffect } from 'react';
 const baseURL="http://localhost:8000/api/logout";
+const baseURLProfile="http://localhost:8000/api/seller/profile";
 const AdminNavbar = (props) => {
   const history = useHistory();
+  const [profileDetails, setProfileDetails] = useState([]);
+
+    const getData=async()=>{
+      const response= await axios.get(baseURLProfile);
+      setProfileDetails(response.data.user);
+      console.log(profileDetails)
+    }
+    useEffect(()=>{
+      getData();
+    }, []);
+
+    const _profile=()=>{
+      if(profileDetails.type=="admin"){
+        return "/admin/editProfile";
+      }
+      else if(profileDetails.type=="buyer"){
+        return "/buyer/Profile";
+      }
+      else if(profileDetails.type="seller"){
+        return "/seller/profile";
+      }
+    }
   return (
     <>
       <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
@@ -48,18 +71,31 @@ const AdminNavbar = (props) => {
             <UncontrolledDropdown nav>
               <DropdownToggle className="pr-0" nav>
                 <Media className="align-items-center">
-                  <span className="avatar avatar-sm rounded-circle">
-                    <img
-                      alt="..."
-                      src={
-                        require("../../assets/img/admin/adminDP.jpg")
-                          .default
+                <Media className="ml-2 d-none d-lg-block">
+                    <span className="mb-0 text-sm font-weight-bold">
+                      { (profileDetails.type=="seller")?
+                        (profileDetails.prime_status=="prime")? "Prime User ":"You have "+profileDetails.points+" points  "
+                        :""
                       }
-                    />
+                    </span>
+                  </Media>
+                  <span className="avatar avatar-sm rounded-circle">
+                    {
+                      (profileDetails.type=="seller")?<img className="card-img-top"  src={ (profileDetails.profile_picture)? "http://localhost:8000/"+profileDetails.profile_picture:'http://localhost:8000/seller/image/demo_profile.png'}
+                            alt="Card image cap"/>:"" 
+                  }
+                  {
+                    (profileDetails.type=="admin")?<img className="card-img-top"  src={ (profileDetails.profile_picture)? "http://localhost:8000/"+profileDetails.profile_picture:'http://localhost:8000/admin/adminDP.jpg'}
+                            alt="Card image cap"/>:"" 
+                  }
                   </span>
                   <Media className="ml-2 d-none d-lg-block">
                     <span className="mb-0 text-sm font-weight-bold">
-                      Admin
+                    
+                      {
+                        (profileDetails.type=="admin")?"Admin":
+                        (profileDetails.name)? profileDetails.name:"No name"
+                      }
                     </span>
                   </Media>
                 </Media>
@@ -68,7 +104,7 @@ const AdminNavbar = (props) => {
                 <DropdownItem className="noti-title" header tag="div">
                   <h6 className="text-overflow m-0">Welcome!</h6>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
+                <DropdownItem to={_profile} tag={Link}>
                   <i className="ni ni-single-02" />
                   <span>My profile</span>
                 </DropdownItem>

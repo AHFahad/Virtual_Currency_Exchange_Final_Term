@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { NavLink as NavLinkRRD, Link } from "react-router-dom";
-// nodejs library to set properties for components
+import { NavLink as NavLinkRRD, Link,useHistory } from "react-router-dom";
+
 import { PropTypes } from "prop-types";
 
-// reactstrap components
+
 import {
   Button,
   Card,
@@ -34,10 +33,40 @@ import {
   Col,
 } from "reactstrap";
 
+
+
+import axios from "axios";
+import Swal from 'sweetalert2';
+import React, { useState, useEffect } from 'react';
+const baseURL="http://localhost:8000/api/logout";
+const baseURLProfile="http://localhost:8000/api/seller/profile";
 var ps;
 
 const Sidebar = (props) => {
+  const history = useHistory();
+  const [profileDetails, setProfileDetails] = useState([]);
   const [collapseOpen, setCollapseOpen] = useState();
+  const getData=async()=>{
+    const response= await axios.get(baseURLProfile);
+    setProfileDetails(response.data.user);
+    console.log(profileDetails)
+  }
+  useEffect(()=>{
+    getData();
+  }, []);
+
+
+  const _profile=()=>{
+    if(profileDetails.type=="admin"){
+      return "/admin/editProfile";
+    }
+    else if(profileDetails.type=="buyer"){
+      return "/buyer/Profile";
+    }
+    else if(profileDetails.type="seller"){
+      return "/seller/profile";
+    }
+  }
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
     return props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
@@ -50,6 +79,10 @@ const Sidebar = (props) => {
   const closeCollapse = () => {
     setCollapseOpen(false);
   };
+
+
+
+
   // creates the links that appear in the left menu / Sidebar
   const createLinks = (routes) => {
     return routes.map((prop, key) => {
@@ -105,41 +138,23 @@ const Sidebar = (props) => {
         {/* Brand */}
         {logo ? (
           <NavbarBrand className="pt-0" {...navbarBrandProps}>
-            <img
-              alt={logo.imgAlt}
-              className="navbar-brand-img"
-              src={logo.imgSrc}
-            />
+            <span><h1><b>VCES</b></h1></span>
           </NavbarBrand>
         ) : null}
         {/* User */}
         <Nav className="align-items-center d-md-none">
           <UncontrolledDropdown nav>
-            <DropdownToggle nav className="nav-link-icon">
-              <i className="ni ni-bell-55" />
-            </DropdownToggle>
-            <DropdownMenu
-              aria-labelledby="navbar-default_dropdown_1"
-              className="dropdown-menu-arrow"
-              right
-            >
-              <DropdownItem>Action</DropdownItem>
-              <DropdownItem>Another action</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem>Something else here</DropdownItem>
-            </DropdownMenu>
-          </UncontrolledDropdown>
-          <UncontrolledDropdown nav>
             <DropdownToggle nav>
               <Media className="align-items-center">
                 <span className="avatar avatar-sm rounded-circle">
-                  <img
-                    alt="..."
-                    src={
-                      require("../../assets/img/theme/team-1-800x800.jpg")
-                        .default
-                    }
-                  />
+                  {
+                      (profileDetails.type=="seller")?<img className="card-img-top"  src={ (profileDetails.profile_picture)? "http://localhost:8000/"+profileDetails.profile_picture:'http://localhost:8000/seller/image/demo_profile.png'}
+                            alt="Card image cap"/>:"" 
+                  }
+                  {
+                    (profileDetails.type=="admin")?<img className="card-img-top"  src={ (profileDetails.profile_picture)? "http://localhost:8000/"+profileDetails.profile_picture:'http://localhost:8000/admin/adminDP.jpg'}
+                            alt="Card image cap"/>:"" 
+                  }
                 </span>
               </Media>
             </DropdownToggle>
@@ -151,20 +166,29 @@ const Sidebar = (props) => {
                 <i className="ni ni-single-02" />
                 <span>My profile</span>
               </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-settings-gear-65" />
-                <span>Settings</span>
-              </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-calendar-grid-58" />
-                <span>Activity</span>
-              </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-support-16" />
-                <span>Support</span>
-              </DropdownItem>
               <DropdownItem divider />
-              <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
+              <DropdownItem href="#pablo" onClick={(e) => {
+                 e.preventDefault();
+                    const response=  axios.get(baseURL).then((res)=>{
+                            Swal.fire(
+                                res.data.msg,
+                                'You clicked the button!',
+                                res.data.status
+                              )
+                              localStorage.clear();
+                              history.push('/login');
+                              
+                    }).catch(res=>{
+                      Swal.fire(
+                                "something went wrong",
+                                'You clicked the button!',
+                                'error'
+                              )
+                              localStorage.clear();
+                              history.push('/login');
+                    })
+                   
+              }}>
                 <i className="ni ni-user-run" />
                 <span>Logout</span>
               </DropdownItem>
@@ -176,19 +200,7 @@ const Sidebar = (props) => {
           {/* Collapse header */}
           <div className="navbar-collapse-header d-md-none">
             <Row>
-              {logo ? (
-                <Col className="collapse-brand" xs="6">
-                  {logo.innerLink ? (
-                    <Link to={logo.innerLink}>
-                      <img alt={logo.imgAlt} src={logo.imgSrc} />
-                    </Link>
-                  ) : (
-                    <a href={logo.outterLink}>
-                      <img alt={logo.imgAlt} src={logo.imgSrc} />
-                    </a>
-                  )}
-                </Col>
-              ) : null}
+              <span><h1><b>VCES</b></h1></span>
               <Col className="collapse-close" xs="6">
                 <button
                   className="navbar-toggler"
@@ -202,21 +214,7 @@ const Sidebar = (props) => {
             </Row>
           </div>
           {/* Form */}
-          <Form className="mt-4 mb-3 d-md-none">
-            <InputGroup className="input-group-rounded input-group-merge">
-              <Input
-                aria-label="Search"
-                className="form-control-rounded form-control-prepended"
-                placeholder="Search"
-                type="search"
-              />
-              <InputGroupAddon addonType="prepend">
-                <InputGroupText>
-                  <span className="fa fa-search" />
-                </InputGroupText>
-              </InputGroupAddon>
-            </InputGroup>
-          </Form>
+          
           
           {/* Navigation */}
           <Nav navbar>{createLinks(routes)}</Nav>
@@ -231,18 +229,11 @@ Sidebar.defaultProps = {
 };
 
 Sidebar.propTypes = {
-  // links that will be displayed inside the component
   routes: PropTypes.arrayOf(PropTypes.object),
   logo: PropTypes.shape({
-    // innerLink is for links that will direct the user within the app
-    // it will be rendered as <Link to="...">...</Link> tag
     innerLink: PropTypes.string,
-    // outterLink is for links that will direct the user outside the app
-    // it will be rendered as simple <a href="...">...</a> tag
     outterLink: PropTypes.string,
-    // the image src of the logo
     imgSrc: PropTypes.string.isRequired,
-    // the alt for the img
     imgAlt: PropTypes.string.isRequired,
   }),
 };

@@ -29,14 +29,11 @@ const StatementsTableRow = ({id,name,updated_at,product_id,price_on_selling_time
    
    
    const dawnloadInVoice=async()=>{
-       console.log(`${baseURL}/${id}/${seller_id}/${buyer_id}`);
-    const response= await axios.get(`${baseURL}/${id}/${seller_id}/${buyer_id}`);
+     axios.get(`${baseURL}/${id}/${seller_id}/${buyer_id}`);
    }
    
     return (
-        <tr>    
-
-            
+        <tr>
                       <th scope="row">
                         <Media className="align-items-center">
                          
