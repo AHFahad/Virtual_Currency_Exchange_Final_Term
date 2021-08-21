@@ -102,6 +102,7 @@ const OrderList = (props) => {
             'You clicked the button!',
             res.data.status
           )
+          window.pointsUpdate++;
           if (res.data.status == 'success') history.push(`/seller/product/${eid}`);
         }).catch((error) => {
           console.log(error)
@@ -127,6 +128,7 @@ const OrderList = (props) => {
             'You clicked the button!',
             res.data.status
           )
+          window.pointsUpdate++;
           if (res.data.status == 'success') history.push('/seller/product/index');
         }).catch((error) => {
           console.log(error)
