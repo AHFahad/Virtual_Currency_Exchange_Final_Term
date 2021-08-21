@@ -68,3 +68,5 @@ Route::get('/user/details/{id}', [UserController::class,'details'])->name('user.
 Route::get('/user/dashboard/{id}', [UserController::class,'dashboard']);
 Route::get('/user/order/{uid}/{id}', [UserController::class,'order']);
 Route::post('/user/order/{uid}/{id}', [UserController::class,'orderConfirm']);
+
+Route::post('/register', [RegistrationController::class,'comfirmRegister']);
