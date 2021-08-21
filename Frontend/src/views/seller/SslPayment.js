@@ -1,21 +1,3 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-// reactstrap components
 import {
     Badge,
     Card,
@@ -49,10 +31,10 @@ import {
   import { useParams  } from "react-router";
   import Swal from 'sweetalert2';
   import { useHistory,Link } from "react-router-dom";
-
+  axios.defaults.headers.common = {'Authorization': `Bearer ${localStorage.getItem('token')}`};
   const baseURL="http://localhost:8000/api/pay";
   const SslPayment = (props) => {
-  
+    
     const history = useHistory();
     const initialize={
         total_amount:"900",
@@ -68,11 +50,13 @@ import {
     
     const _onSubmit= async(e)=>{
       e.preventDefault();
+      
      const payment={
         total_amount:paymentDetails.total_amount,
         }   
-        console.log(payment)
-        axios.post(baseURL,payment)
+
+        console.log(payment+"2")
+        axios.get(baseURL,payment)
         .then((res) => {
         console.log(res.data)
         Swal.fire(
@@ -137,9 +121,9 @@ import {
                   {/* form */}
                   
                   <Form
-                //   onSubmit={_onSubmit}
+                  // onSubmit={_onSubmit}
                   encType="multipart/form-data"
-                  action="http://localhost:8000/api/pay"
+                  action={"http://localhost:8000/api/pay/"+localStorage.getItem('id')}
                   method="POST"
                   >
                   

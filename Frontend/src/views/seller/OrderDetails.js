@@ -1,21 +1,3 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-// reactstrap components
 import {
     Badge,
     Card,
@@ -41,8 +23,8 @@ import {
     Col,
     Button
   } from "reactstrap";
-  // core components
   import Header from "components/Headers/Header.js";
+  import ProductInfoTemplete from 'components/seller/ProductInfoTemplete.js';
   import axios from "axios";
   import React, { useState, useEffect } from 'react';
   import _Table from 'components/Table.js'
@@ -57,10 +39,15 @@ import {
     const [orderDetails, setOrderDetails] = useState([]);
     const [productDetails, setProductDetails] = useState([]);
     const[formValidation,setFormValidation]=useState([]);
+    const [paymentMethods, setPaymentMethods] = useState([]);
+
     const getData=async()=>{
-      const response= await axios.get(baseURL+eid);
-      setOrderDetails(response.data.order);
-      setProductDetails(response.data.product);
+     axios.get(baseURL+eid).then((response)=>{
+        setOrderDetails(response.data.order);
+        setProductDetails(response.data.product);
+        setPaymentMethods(response.data.payment_methods);
+      } )
+      
     }
 
     useEffect(()=>{
@@ -125,47 +112,15 @@ import {
                     <h3 className="mb-0">Order Details</h3>
                   </Col>
                   <Col className="text-right" xs="4">
-                    {/* <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Settings
-                    </Button> */}
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
-                
-                  <h6 className="heading-small text-muted mb-4">
+              <ProductInfoTemplete key={productDetails.id} {...productDetails} paymentMethods={paymentMethods}></ProductInfoTemplete>                  <h6 className="heading-small text-muted mb-4">
                     Product information
                   </h6>
                   <div className="pl-lg-4">
-                    <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-username"
-                          >
-                            Order No: 
-                          </label>
-                          {orderDetails.id}
-                        </FormGroup>
-                      </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-email"
-                          >
-                            Product Title:
-                          </label>
-                          {productDetails.name}
-                        </FormGroup>
-                      </Col>
-                    </Row>
+                
                     <Row>
                       <Col lg="6">
                         <FormGroup>
@@ -173,7 +128,7 @@ import {
                             className="form-control-label"
                             htmlFor="input-first-name"
                           >
-                            price In Taka:
+                            Price on selling time In Taka:
                           </label>
                           { orderDetails.price_on_selling_time }
                         </FormGroup>
@@ -202,46 +157,13 @@ import {
                           { orderDetails.amount*orderDetails.price_on_selling_time }
                         </FormGroup>
                       </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-last-name"
-                          >
-                            Payment method:
-                          </label>
-                          Bikash
-                        </FormGroup>
-                      </Col>
+                      
                     </Row>
                     <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-first-name"
-                          >
-                            Payment recive NO:
-                          </label>
-                          { productDetails.Pyament_recive_no }
-                        </FormGroup>
-                      </Col>
+                      
                      
                     </Row>
-                    <Row>
-                      <Col lg="12">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-first-name"
-                          >
-                            Product Desciption:
-                          </label><br/>
-                          { productDetails.description }
-                        </FormGroup>
-                      </Col>
-                     
-                    </Row>
+                   
                   </div>
                   <hr className="my-4" />
                   {/* Address */}

@@ -1,21 +1,3 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-// reactstrap components
 import {
     Badge,
     Card,
@@ -41,7 +23,6 @@ import {
     Col,
     Button
   } from "reactstrap";
-  // core components
   import {Link} from "react-router-dom";
   import Header from "components/Headers/Header.js";
   import axios from "axios";
@@ -78,33 +59,7 @@ import {
     //   console.log(orderDetails);
     };
 
-    const _onSubmit= async(e)=>{
-      e.preventDefault();
-     const order={
-    //   transection_no:orderDetails.transection_no,
-    //   seller_reply:orderDetails.seller_reply,
-    //   status:orderDetails.status
-     }
-
-     axios.put(baseURL+eid, order)
-     .then((res) => {
-       console.log(res.data)
-        Swal.fire(
-          res.data.msg,
-          'You clicked the button!',
-          res.data.status
-        )
-        history.push('/seller/orders');
-     }).catch((error) => {
-       console.log(error)
-       Swal.fire(
-        'somting wen wrong',
-        'You clicked the button!',
-        'error'
-      )
-     })
-     
-    };
+    
     const _delete=(e)=>{
       e.preventDefault();
       Swal.fire({
@@ -117,29 +72,23 @@ import {
         confirmButtonText: 'Yes, delete it!'
       }).then((result) => {
         if (result.isConfirmed) {
-
-          axios.delete(baseURL+eid)
-     .then((res) => {
-       console.log(res.data)
-        Swal.fire(
-          res.data.msg,
-          'You clicked the button!',
-          res.data.status
-        )
-        history.push('/seller/product/index');
-     }).catch((error) => {
-       console.log(error)
-       Swal.fire(
-        'somting wen wrong',
-        'You clicked the button!',
-        'error'
-      )
-     })
-          // Swal.fire(
-          //   'Deleted!',
-          //   'Your file has been deleted.',
-          //   'success'
-          // )
+                axios.delete(baseURL+eid)
+          .then((res) => {
+            console.log(res.data)
+              Swal.fire(
+                res.data.msg,
+                'You clicked the button!',
+                res.data.status
+              )
+              history.push('/seller/product/index');
+          }).catch((error) => {
+            console.log(error)
+            Swal.fire(
+              'somting wen wrong',
+              'You clicked the button!',
+              'error'
+            )
+          })
         }
       })
     }
@@ -177,9 +126,6 @@ import {
               </CardHeader>
               <CardBody>
                 <ProductInfoTemplete key={productDetails.id} {...productDetails} paymentMethods={paymentMethods}></ProductInfoTemplete>
-                  
-
-
 
                 <div className="pl-lg-4">                 
                     <Row>
@@ -196,16 +142,9 @@ import {
                       </Col>
                     </Row>
                   </div>
-
-                  {/* form */}
-                  <Form
-                  onSubmit={_onSubmit}
-                  >
+          
                   <h6 className="heading-small text-muted mb-4">Action:</h6>
-                 
-                      
-                   
-                  
+  
                     <Link
                       color="primary"
                       className="btn btn-primary"
@@ -213,10 +152,7 @@ import {
                     >
                       Edit
                     </Link>
-                    
-                  
                 
-                </Form>
                 <Button
                       color="danger"
                       onClick={_delete}

@@ -17,10 +17,11 @@ class DashboardController extends Controller
 
 
     public function index(Request $request){
-
+        // $token = $request->bearerToken();
+        $user= $request->user();
         $this->pointsChecker($request);
         // $request->session()->get('id')
-        $user = User::find(1);
+        // $user = User::find(1);
 
         $product=Product::join('orders','orders.product_id','=','products.id')
                         ->join('users','users.id','=','products.seller_id')
@@ -67,12 +68,14 @@ class DashboardController extends Controller
             'start_date' => $start_date,
             'end_date' => $end_date,
             'total_earning' => $total_earning,
-            'status'=>'success'
+            'status'=>'success',
+            "token"=>$user
         ]);
     }
     public function get(Request $request){
         // $request->session()->get('id')
-        $user = User::find(1);
+        // $user = User::find(1);
+        $user= $request->user();
         $start_date=$request->start_date;
         $end_date=$request->end_date;
 
@@ -129,7 +132,8 @@ class DashboardController extends Controller
     }
     public function pointsChecker(Request $request){
         // $request->session()->get('id')
-        $user = User::find(1);
+        // $user = User::find(1);
+        $user= $request->user();
         $p=Prime_reset::where('seller_id',$user->id)->first();
         // dd($prime->count());
 

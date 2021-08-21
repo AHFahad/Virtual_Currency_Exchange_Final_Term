@@ -6,13 +6,15 @@ use Illuminate\Http\Request;
 use App\Http\Requests\EditProfileRequest;
 use App\Http\Requests\EditUserInfoRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Input;
 
 class AdminHomeController extends Controller
 {
     
     public function index(Request $req){
-        $id = $req->session()->get('id');
-        $name = DB::table('users')->where('id', $id)->first();
+        //$id = $req->session()->get('id');
+        //$name = DB::table('users')->where('id', $id)->first();
         
         $orders = DB::table('orders')->count();
         $values = DB::table('orders')->sum('price_on_selling_time');
@@ -23,38 +25,84 @@ class AdminHomeController extends Controller
         $buyers = DB::table('users')->where('type', 'buyer')->where('status', '<>', 'deleted')->count();
         $primes = DB::table('users')->where('prime_status', 'prime')->count();
 
-        return view('admin.adminHome', compact('users','admins','sellers','buyers','primes','orders','values','counter'))->with('adminHome',$name);
+        //return view('admin.adminHome', compact('users','admins','sellers','buyers','primes','orders','values','counter'))->with('adminHome',$name);
+
+        return response()->json([
+            'orders' => $orders,
+            'values' => $values,
+            'counter' => $counter,
+            'users' => $users,
+            'admins' => $admins,
+            'sellers' => $sellers,
+            'buyers' => $buyers,
+            'primes'=>$primes
+        ]);
     }
 
     public function addAdmin(Request $req){
-        return view('admin.createAdmin');
+        return response()->json([
+            'success' => true
+        ]);
     }
 
-    public function verifyAddAdmin(EditProfileRequest $req){
+    public function verifyAddAdmin(Request $req){
+
+        $user= $req->user();
+
         DB::table('users')->insert(
             ['name' => $req->name,
             'email' => $req->email,
             'password' => $req->password,
             'address' => $req->address,
-            'phone_number' => $req->phone,
+            'phone_number' => $req->phone_number,
             'nid_number' => $req->nid_number,
             'type' => 'admin',
-            'aproved_by' => $req->session()->get('id'),
+            'aproved_by' => $user->id,
             'status' => 'active',
             'created_at' => date('Y/m/d H:i:s'),
         ]);
-        return redirect()->route('adminViewAllUserInfo');
+        return response()->json([
+            'success' => true
+        ]);
     }
 
     public function editProfile(Request $req){
 
-        $id = $req->session()->get('id');
-        $name = DB::table('users')->where('id', $id)->first();
+        $user= $req->user();
+        $profDetails = DB::table('users')->where('id', $user->id)->first();
 
-        return view('admin.adminEditProfile')->with('adminEditProfile',$name);
+        return response()->json([
+            'profDetails' => $profDetails,
+            'id' => $user->id
+        ]);
     }
 
-    public function verifyEditProfile(EditProfileRequest $req, $id){
+    public function verifyEditProfile(Request $req, $id){
+
+
+        $validator = Validator::make($req->all(), [
+            'name' => 'required|max:20|min:4',
+            'email' => 'required|max:20|min:11',
+            'password' => 'required|max:20|min:8|regex:/^.+@.+$/',
+            'address' => 'required|max:50|min:3',
+            'phone_number' => 'required|max:11|min:11',
+         ],
+         [
+            'name.required' => 'Must provide a name',
+            'email.required' => 'Must provide a email.',
+            'password.required' => 'Must provide a password within 8-20 Characters',
+            'password.regex' => 'Password must have atleast one of these characters: "/^.+@.+$/"'
+        ]
+        );
+
+         if ($validator->fails()) {
+            return response()->json([
+                "errorData"=>$validator->errors(),
+                'msg' => "Validation Error",
+                'status' => 'error',
+                'error'=>'400'
+            ]);
+        }
 
 
         if($req->hasFile('profile_picture')){
@@ -62,14 +110,13 @@ class AdminHomeController extends Controller
             $newName = 'adminDP1'.'.'.$extension;
             $folderPath = "admin/";
             DB::table('users')
-            ->where('id', $req->id)
+            ->where('id', $id)
             ->update(['name' => $req->name,
-                      'email' => $req->email,
-                      'password' => $req->password,
-                      'address' => $req->address,
-                      'phone_number' => $req->phone,
-                      'updated_at' => date('Y/m/d H:i:s'),
-                      'profile_picture' => $folderPath.$newName,
+                    'email' => $req->email,
+                    'password' => $req->password,
+                    'address' => $req->address,
+                    'phone_number' => $req->phone_number,
+                    'profile_picture' => $folderPath.$newName,
                     ]);
            
             $req->profile_picture->move($folderPath, $newName);
@@ -78,97 +125,155 @@ class AdminHomeController extends Controller
 
         else{
             DB::table('users')
-            ->where('id', $req->id)
+            ->where('id', $id)
             ->update(['name' => $req->name,
-                      'email' => $req->email,
-                      'password' => $req->password,
-                      'address' => $req->address,
-                      'phone_number' => $req->phone,
+                     'email' => $req->email,
+                     'password' => $req->password,
+                     'address' => $req->address,
+                     'phone_number' => $req->phone_number,
                       'updated_at' => date('Y/m/d H:i:s'),
                     ]);
         }
-        return redirect()->route('adminEditProfile');
+        return response()->json([
+            'status' => "success"
+        ]);
     }
 
     public function viewAllUserInfo(Request $req){
-        $users = DB::table('users')->where('status', '<>', 'deleted')->where('id', '<>', $req->session()->get('id'))->get();
+        $users = DB::table('users')->where('status', '<>', 'deleted')->get();
 
-        return view('admin.adminViewAllUserInfo')->with('adminViewAllUserInfo',$users);
+        return response()->json([
+            'users' => $users
+        ]);
     }
 
     public function editUserInfo(Request $req, $id){
         $users = DB::table('users')->where('id', $id)->first();
 
-        return view('admin.adminEditUserInfo')->with('adminEditUserInfo',$users);
+        return response()->json([
+            'users' => $users
+        ]);
     }
     
-    public function verifyEditUserInfo(EditUserInfoRequest $req, $id){
+    public function verifyEditUserInfo(Request $req, $id){
+
+        $validator = Validator::make($req->all(), [
+            'name' => 'required|max:20|min:4',
+            'email' => 'required|max:20|min:11',
+            'password' => 'required|max:20|min:8|regex:/^.+@.+$/',
+            'address' => 'required|max:50|min:3',
+            'phone_number' => 'required|max:11|min:11',
+            'prime_status' => 'required',
+            'status' => 'required',
+         ],
+         [
+            'name.required' => 'Must provide a name',
+            'email.required' => 'Must provide a email.',
+            'password.required' => 'Must provide a password within 8-20 Characters',
+            'password.regex' => 'Password must have atleast one of these characters: "/^.+@.+$/"',
+            'prime_status.required' => 'Must choose one',
+            'status.required' => 'Must choose one'
+        ]
+        );
+
+         if ($validator->fails()) {
+            return response()->json([
+                "errorData"=>$validator->errors(),
+                'msg' => "Validation Error",
+                'status' => 'error',
+                'error'=>'400'
+            ]);
+        }
+
         DB::table('users')
             ->where('id', $req->id)
             ->update(['name' => $req->name,
                       'email' => $req->email,
                       'password' => $req->password,
                       'address' => $req->address,
-                      'phone_number' => $req->phone,
+                      'phone_number' => $req->phone_number,
                       'prime_status' => $req->prime_status,
                       'status' => $req->status,
                       'updated_at' => date('Y/m/d H:i:s'),
                     ]);
-        return redirect()->route('adminViewAllUserInfo');
+        return response()->json([
+            'status' => "success"
+        ]);
     }
 
     public function deleteUserInfo(Request $req, $id){
         DB::table('users')
         ->where('id', $req->id)
         ->update(['status' => 'deleted']);
-        return redirect()->route('adminViewAllUserInfo');
+        
+        return response()->json([
+            'status' => "success"
+        ]);
     }
 
     public function viewAllTransaction(Request $req){
         $orders = DB::table('orders')->get();
 
-        return view('admin.adminViewAllTransaction')->with('adminViewAllTransaction',$orders);
+        return response()->json([
+            'orders' => $orders
+        ]);
     }
 
     public function userReports(Request $req){
-        $reports = DB::table('reports')->get();
+        $reports = DB::table('reports')->orderBy('rep_id','desc')->get();
 
-        return view('admin.adminUserReports')->with('adminUserReports',$reports);
+        return response()->json([
+            'reports' => $reports
+        ]);
     }
 
     public function announcement(Request $req){
-        $announcements = DB::table('announcements')->where('status','=','active')->get();
+        $announcements = DB::table('announcements')->where('status','=','active')->orderBy('ann_id','desc')->get();
 
-        return view('admin.adminAnnouncement')->with('adminAnnouncement',$announcements);
+        return response()->json([
+            'announcements' => $announcements
+        ]);
     }
 
     public function sendAnnouncement(Request $req){
+
+        $user= $req->user();
+
         DB::table('announcements')->insert(
-            ['admin_id' => $req->session()->get('id'),
+            ['admin_id' => $user->id,
             'description' => $req->desc,
             'created_at' => date('Y/m/d H:i:s'),
             'status' => 'active'
         ]);
-        return redirect()->route('adminAnnouncement');
+        return response()->json([
+            'status' => "success"
+        ]);
     }
 
     public function deleteAnnouncement(Request $req, $id){
         DB::table('announcements')
         ->where('ann_id', $req->id)
         ->update(['status' => 'deleted']);
-        return redirect()->route('adminAnnouncement');
+        
+        return response()->json([
+            'status' => "success"
+        ]);
     }
 
     public function prime_approval(Request $req){
         $prime = DB::table('payments')->get();
 
-        return view('admin.prime_approval')->with('prime_approval',$prime);
+        return response()->json([
+            'prime' => $prime
+        ]);
     }
 
     public function editPrimeDuration(Request $req, $seller_id){
         $users = DB::table('prime_resets')->where('seller_id', $seller_id)->first();
 
-        return view('admin.editPrime_resets')->with('prime_resets',$users);
+        return response()->json([
+            'users' => $users
+        ]);
     }
 
     public function updatePrimeDuration(Request $req, $seller_id){
@@ -177,6 +282,9 @@ class AdminHomeController extends Controller
             ->update(['prime_expire_date' => $req->prime_expire_date,
                       'updated_at' => date('Y/m/d H:i:s'),
                     ]);
-        return redirect()->route('prime_approval');
+
+        return response()->json([
+            'status' => "success"
+        ]);
     }
 }
