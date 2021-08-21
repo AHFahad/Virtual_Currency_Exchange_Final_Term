@@ -150,6 +150,7 @@ Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
 Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
 
 
+
 //buyer
 Route::group([
     'middleware'=>['auth:sanctum']
