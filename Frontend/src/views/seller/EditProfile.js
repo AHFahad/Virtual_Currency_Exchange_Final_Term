@@ -89,6 +89,8 @@ import {
               'You clicked the button!',
               res.data.status
           )
+          
+          window.pointsUpdate++;
         if(res.data.status=='success') history.push(`/seller/profile`);
         }).catch((error) => {
         console.log(error)

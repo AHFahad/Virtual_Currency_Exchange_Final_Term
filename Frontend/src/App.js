@@ -15,7 +15,6 @@ import SellerLayout from "./layouts/Seller.js";
 import BuyerLayout from "./layouts/Buyer.js";
 import SignUp from "SignUp";
 import AuthLayout from "./layouts/Auth.js";
-import AddAdmin from 'views/admin/createAdmin';
 function App() {
   return (
     <div>
@@ -27,8 +26,6 @@ function App() {
         <Route path="/buyer" render={(props) => <BuyerLayout {...props} />} />
         <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
             <Redirect from="/" to="/auth/login" />
-        {/* <Route path="/admin/addAdmin" component = {AddAdmin} /> */}
-        <Redirect from="/" to="/admin/index" />
       </Switch>
     </Router>
     </div>

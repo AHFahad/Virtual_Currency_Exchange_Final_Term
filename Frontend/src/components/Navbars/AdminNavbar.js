@@ -1,5 +1,6 @@
 import { useHistory,Link } from "react-router-dom";
-// reactstrap components
+
+
 import {
   DropdownMenu,
   DropdownItem,
@@ -21,6 +22,7 @@ import Swal from 'sweetalert2';
 import React, { useState, useEffect } from 'react';
 const baseURL="http://localhost:8000/api/logout";
 const baseURLProfile="http://localhost:8000/api/seller/profile";
+ window.pointsUpdate=0;
 const AdminNavbar = (props) => {
   const history = useHistory();
   const [profileDetails, setProfileDetails] = useState([]);
@@ -32,7 +34,7 @@ const AdminNavbar = (props) => {
     }
     useEffect(()=>{
       getData();
-    }, []);
+    }, [window.pointsUpdate]);
 
     const _profile=()=>{
       if(profileDetails.type=="admin"){
