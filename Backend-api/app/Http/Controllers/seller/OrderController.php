@@ -19,7 +19,8 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         // $request->session()->put('id', 1);
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
         // dd($user->id);
         $product=Product::join('orders','orders.product_id','=','products.id')
                         ->join('users','users.id','=','products.seller_id')
@@ -69,7 +70,9 @@ class OrderController extends Controller
     public function show($id,Request $request)
     {
         // $request->session()->get('id')
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
+        $payment_methods = array('none',"Bkash", "Nagod", "roket","Mkash","Ukash","Gkash");
         $order=Order::find($id);
         $product=Product::find($order->product_id);
         // return view('seller.orderDetails',compact('user','order','product'));
@@ -77,6 +80,7 @@ class OrderController extends Controller
         return response()->json([
             'product' => $product,
             'user' => $user,
+            'payment_methods' => $payment_methods,
             'order'=>$order,
         ]);
 
@@ -121,7 +125,8 @@ class OrderController extends Controller
         }
         // $request->session()->get('id')
         $order=Order::find($id);
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
 
         $product=Product::find($order->product_id);
 

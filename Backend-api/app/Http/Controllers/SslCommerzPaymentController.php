@@ -23,13 +23,14 @@ class SslCommerzPaymentController extends Controller
         return view('exampleHosted');
     }
 
-    public function index(Request $request)
+    public function index(Request $request,$id)
     {
         # Here you have to receive all the order data to initate the payment.
         # Let's say, your oder transaction informations are saving in a table called "orders"
         # In "orders" table, order unique identity is "transaction_id". "status" field contain status of the transaction, "amount" is the order amount to be paid and "currency" is for storing Site Currency which will be checked with paid currency.
         // $request->session()->get('id')
-        $user=User::find(1);
+        $user=User::find($id);
+        // $user= $token->user();
 
 
         $post_data = array();
@@ -225,7 +226,7 @@ class SslCommerzPaymentController extends Controller
                         $prime->update();
                         $user->update();
                     }
-
+                    return redirect('http://localhost:3000/seller/pay/'."success");
                     // return redirect()->route('seller.ssl.payment.result','success');
             } else {
                 /*
@@ -237,6 +238,7 @@ class SslCommerzPaymentController extends Controller
                     ->update(['status' => 'Failed']);
                 // echo "validation Fail";
                 // return redirect()->route('seller.ssl.payment.result','Validation Fail');
+                return redirect('http://localhost:3000/seller/pay/'."validation_failed");
             }
         } else if ($order_detials->status == 'Processing' || $order_detials->status == 'Complete') {
             /*
@@ -248,6 +250,7 @@ class SslCommerzPaymentController extends Controller
             #That means something wrong happened. You can redirect customer to your product page.
             // echo "Invalid Transaction";
             // return redirect()->route('seller.ssl.payment.result','Invalid Transaction');
+            return redirect('http://localhost:3000/seller/pay/'."Invalid_Transaction");
         }
 
 
@@ -265,14 +268,17 @@ class SslCommerzPaymentController extends Controller
             $update_product = DB::table('ssl_payments')
                 ->where('transaction_id', $tran_id)
                 ->update(['status' => 'Failed']);
-            echo "Transaction is Falied";
-            return redirect()->route('seller.ssl.payment.result','Transaction is Falied');
+
+            // return redirect()->route('seller.ssl.payment.result','Transaction is Falied');
+            return redirect('http://localhost:3000/seller/pay/'."Transaction_Falied");
         } else if ($order_detials->status == 'Processing' || $order_detials->status == 'Complete') {
             echo "Transaction is already Successful";
-            return redirect()->route('seller.ssl.payment.result','Transaction is already Successful');
+            // return redirect()->route('seller.ssl.payment.result','Transaction is already Successful');
+            return redirect('http://localhost:3000/seller/pay/'."Transaction_already_Successful");
         } else {
             echo "Transaction is Invalid";
-            return redirect()->route('seller.ssl.payment.result','Transaction is Invalid');
+            // return redirect()->route('seller.ssl.payment.result','Transaction is Invalid');
+            return redirect('http://localhost:3000/seller/pay/'."Transaction_is_Invalid");
         }
 
     }

@@ -12,7 +12,8 @@ class SslController extends Controller
         return view('seller.sllpayment',compact('user'));
     }
     public function result(Request $request,$result){
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
         if($result=='success'){
             // $request->session()->flash('msg'," Successfully Upgraded to prime User!");
             return response()->json([

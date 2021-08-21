@@ -15,6 +15,8 @@ import ProductDetails from "./views/seller/ProductDetails.js";
 import CreateProduct from "./views/seller/CreateProduct.js";
 import StatementList from "./views/seller/StatementList.js";
 import StatementDetails from "./views/seller/StatementDetails.js";
+import LoginRedirected from "./views/seller/LoginRedirected.js";
+import SslPaymentRedirected from "./views/seller/SslPaymentRedirected.js";
 
 var routes = [
   {
@@ -137,6 +139,23 @@ var routes = [
     layout: "/seller",
     show:true,
   },
+  {
+    path: "/log/:token",
+    name: "token",
+    icon: "ni ni-ungroup  text-primary",
+    component:LoginRedirected,
+    layout: "/seller",
+    show:false,
+  },
+  {
+    path: "/pay/:message",
+    name: "payment",
+    icon: "ni ni-ungroup  text-primary",
+    component:SslPaymentRedirected,
+    layout: "/seller",
+    show:false,
+  },
+  
   
 ];
 export default routes;

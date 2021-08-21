@@ -18,12 +18,15 @@ class StatementController extends Controller
     public function index(Request $request)
     {
         // $request->session()->get('id')
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
         $product=Product::join('orders','orders.product_id','=','products.id')
                         ->join('users','users.id','=','products.seller_id')
                         ->where('products.seller_id',$user->id)
-                        ->Where('orders.status','cancelled')
-                        ->orWhere('orders.status','completed')
+                        ->where(function($q){
+                            $q->Where('orders.status','cancelled')
+                            ->orWhere('orders.status','completed');
+                        })
                         ->orderBy('updated_at','desc')->take(1000)
                         ->get(['orders.id','orders.updated_at','orders.price_on_selling_time','orders.amount','orders.status','orders.product_id','products.name','products.seller_id','orders.buyer_id']);
         $total_income=0;
@@ -32,7 +35,7 @@ class StatementController extends Controller
             'product' => $product,
             'user' => $user,
             'total_income' => $total_income,
-            'user' => $user,
+            'user' => $user->id,
             'status'=>'success'
         ]);
     }
@@ -67,14 +70,17 @@ class StatementController extends Controller
     public function show($id,Request $request)
     {
         // $request->session()->get('id')
-        $user=User::find(1);
+        // $user=User::find(1);
+        $user= $request->user();
         $order=Order::find($id);
+        $payment_methods = array('none',"Bkash", "Nagod", "roket","Mkash","Ukash","Gkash");
         $product=Product::find($order->product_id);
         // return view('seller.statementdetails',compact('user','order','product'));
         return response()->json([
             'product' => $product,
             'user' => $user,
             'order' => $order,
+            'payment_methods' => $payment_methods,
             'status'=>'success'
         ]);
     }

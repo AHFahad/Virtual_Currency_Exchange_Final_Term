@@ -42,9 +42,10 @@ import {
     const [avg_rating, setAvg_rating] = useState([]);
 
     const getData=async()=>{
-      const response= await axios.get(baseURL);
-      setProfileDetails(response.data.user);
-      console.log(response.data.user);
+      await axios.get(baseURL).then(response=>{
+        setProfileDetails(response.data.user);
+        console.log(response.data.user);
+      });
     }
 
     useEffect(()=>{
@@ -112,7 +113,7 @@ import {
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="8">
-                    <h3 className="mb-0">Order Details</h3>
+                    <h3 className="mb-0">Profile Details</h3>
                   </Col>
                   <Col className="text-right" xs="4">
                     {/* <Button

@@ -1,21 +1,3 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-// reactstrap components
 import {
     Badge,
     Card,
@@ -41,7 +23,6 @@ import {
     Col,
     Button
   } from "reactstrap";
-  // core components
   import Header from "components/Headers/Header.js";
   import axios from "axios";
   import React, { useState, useEffect } from 'react';
@@ -72,40 +53,28 @@ import {
     useEffect(()=>{
       getData();
     }, []);
-    const formdata = new FormData();
+    
     const handleInputChange = (event) => {
       const { name, value } = event.target;
       setProfileDetails({ ...profileDetails, [name]: value });
     };
-
-    
-    
-    const  handlePicInput=(event)=>{
-      let p = event.target.files[0];
-      formdata.append("profile_picture", p);
-      console.log(formdata.get('profile_picture'));
-    }
     const _onSubmit= async(e)=>{
       e.preventDefault();
-      console.log(profileDetails.id)
-     const product={
-        name:profileDetails.name,
-        address:profileDetails.address,
-        phone_number:profileDetails.phone_number,
-        profile_picture:profileDetails.profile_picture_upload,
-     }
-     console.log(product);
-     
+
     //  often forgets the file
+    const formdata = new FormData();
     let imagefile = document.querySelector('#file-input');
     formdata.append("profile_picture", imagefile.files[0]);
     console.log(formdata.get('profile_picture'));
 
-
-    formdata.append('name',product.name);
-    formdata.append('address',product.address);
-    formdata.append('phone_number',product.phone_number);
-    console.log("test2"+formdata.get('profile_picture'));
+    formdata.append('name',profileDetails.name);
+    formdata.append('address',profileDetails.address);
+    formdata.append('phone_number',profileDetails.phone_number);
+    console.log(formdata.get('phone_number'));
+    console.log(formdata.get('address'));
+    console.log(formdata.get('name'));
+    console.log(formdata.get('profile_picture'));
+    
        
         axios.post(baseURL, formdata)
         .then((res) => {
@@ -113,22 +82,24 @@ import {
         if(res.data.error==400){
           setFormValidation(res.data.errorData)
           console.log(res.data.errorData)
+
         }
-        Swal.fire(
-            res.data.msg,
-            'You clicked the button!',
-            res.data.status
-        )
+          Swal.fire(
+              res.data.msg,
+              'You clicked the button!',
+              res.data.status
+          )
         if(res.data.status=='success') history.push(`/seller/profile`);
         }).catch((error) => {
         console.log(error)
-        Swal.fire(
-        'somting wentt wrong',
-        'You clicked the button!',
-        'error'
-        )
+          Swal.fire(
+            'somting wentt wrong',
+            'You clicked the button!',
+            'error'
+          )
+          getData();
         })
-
+        
         
       
     };
@@ -206,7 +177,7 @@ import {
                           >
                             Uplaod photo: 
                           </label><br/>
-                          <input type="file" id="file-input" name="profile_picture_upload" className="mb-4" onChange={handlePicInput}  />
+                          <input type="file" id="file-input" name="profile_picture_upload" className="mb-4" onChange={handleInputChange}  />
                           
                         </FormGroup>
                     </Col>
