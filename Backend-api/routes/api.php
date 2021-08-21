@@ -150,6 +150,7 @@ Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
 Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
 
 
+
 //buyer
 Route::get('/user/profile/{id}', [UserController::class,'profile'])->name('user.profile');
 Route::get('/user/history/{id}', [UserController::class,'history'])->name('user.history');
