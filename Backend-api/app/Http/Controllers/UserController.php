@@ -221,7 +221,7 @@ class UserController extends Controller
         //     return back()->withErrors($validator)->withInput();
         // }
 
-        return redirect('user/orders');
+        //return redirect('user/orders');
     }
 
     public function notification(Request $req){
