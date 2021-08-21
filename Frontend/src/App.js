@@ -12,6 +12,8 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-d
 
 import AdminLayout from "./layouts/Admin.js";
 import SellerLayout from "./layouts/Seller.js";
+import BuyerLayout from "./layouts/Buyer.js";
+import SignUp from "SignUp";
 import AuthLayout from "./layouts/Auth.js";
 import AddAdmin from 'views/admin/createAdmin';
 function App() {
@@ -21,6 +23,8 @@ function App() {
       <Switch>
         <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
         <Route path="/seller" render={(props) => <SellerLayout {...props} />} />
+        <Route path="/signup" render={(props) => <SignUp {...props} />} />
+        <Route path="/buyer" render={(props) => <BuyerLayout {...props} />} />
         <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
             <Redirect from="/" to="/auth/login" />
         {/* <Route path="/admin/addAdmin" component = {AddAdmin} /> */}
